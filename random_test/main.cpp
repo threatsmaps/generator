@@ -49,4 +49,7 @@ int main()
 			exit(-1);
 		}
 	}
+	for (int i = 0; i < NUM_THREADS; i++) {
+		pthread_join(threads[i], NULL);
+	}
 }
