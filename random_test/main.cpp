@@ -7,6 +7,7 @@
 #include "include/def.hpp"
 
 #define NUM_THREADS 2
+#define SINGLE 1
 
 int DECAY;
 float LAMBDA;
@@ -19,7 +20,7 @@ void * stream_thread(void *threadid) {
 	tid = (long)threadid;
 	Histogram* hist = Histogram::get_instance();
 
-	for (int i = 0; i < 10000; i++) {
+	for (int i = 0; i < 10; i++) {
 		std::cout << "Thread ID: " << tid << std::endl;
 		hist->update(labels[i % 10], true, false, param_map);
 	}
@@ -40,16 +41,24 @@ int main()
 
 	hist->create_sketch(param_map);
 
-	for (int i = 0; i < NUM_THREADS; i++) {
-		std::cout << "main() : creating thread, " << i << std::endl;
-		int rc = pthread_create(&threads[i], NULL, stream_thread, (void *)i);
+	if (SINGLE) {
+        	for (int i = 0; i < 10; i++) {
+                	hist->update(labels[i % 10], true, false, param_map);
+        	}
+	}
+	else {
+		for (int i = 0; i < NUM_THREADS; i++) {
+			std::cout << "main() : creating thread, " << i << std::endl;
+			int rc = pthread_create(&threads[i], NULL, stream_thread, (void *)i);
       
-		if (rc) {
-			std::cout << "Error: unable to create thread," << rc << std::endl;
-			exit(-1);
+			if (rc) {
+				std::cout << "Error: unable to create thread," << rc << std::endl;
+				exit(-1);
+			}
+		}
+		for (int i = 0; i < NUM_THREADS; i++) {
+			pthread_join(threads[i], NULL);
 		}
 	}
-	for (int i = 0; i < NUM_THREADS; i++) {
-		pthread_join(threads[i], NULL);
-	}
+	return 0;
 }
