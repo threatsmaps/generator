@@ -31,6 +31,20 @@ Histogram::~Histogram(){
 	delete histogram;
 }
 
+struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
+	struct hist_elem new_elem;
+	std::default_random_engine r_generator(label);
+	std::default_random_engine c_generator(label / 2);
+	std::default_random_engine beta_generator(label);
+	for (int i = 0; i < SKETCH_SIZE; i++) {
+		new_elem.r[i] = gamma_dist(r_generator);
+		new_elem.beta[i] = uniform_dist(beta_generator);
+		new_elem.c[i] = gamma_dist(c_generator);
+	}
+	return new_elem;
+}
+
+
 /*!
  * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value.
  * 
@@ -83,27 +97,28 @@ void Histogram::update(unsigned long label, bool increment_t, bool base, std::ma
 		}
 		struct hist_elem histo_param = basemapit->second;
 
-		std::default_random_engine r_generator(label);
-		std::default_random_engine c_generator(label / 2);
-		std::default_random_engine beta_generator(label);
+		struct hist_elem generated_param = this->construct_hist_elem(label);
+		// std::default_random_engine r_generator(label);
+		// std::default_random_engine c_generator(label / 2);
+		// std::default_random_engine beta_generator(label);
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			/* Compute the new hash value a. */
-			double r = gamma_dist(r_generator);
-			double beta = uniform_dist(beta_generator);
-			double c = gamma_dist(c_generator);
+			// double r = gamma_dist(r_generator);
+			// double beta = uniform_dist(beta_generator);
+			// double c = gamma_dist(c_generator);
 
-			if (r != histo_param.r[i]) {
-				std::cout << "r value should be the same for label: " << label << ". But it is not at location i: " << i << std::endl;
+			if (generated_param.r[i] != histo_param.r[i]) {
+				std::cout << "r value (" << generated_param.r[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
 			}
-			if (beta != histo_param.beta[i]) {
-				std::cout << "beta value should be the same for label: " << label << ". But it is not at location i: " << i << std::endl;
+			if (generated_param.beta[i] != histo_param.beta[i]) {
+				std::cout << "beta value (" << generated_param.beta[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
 			}
-			if (c != histo_param.c[i]) {
-				std::cout << "c value should be the same for label: " << label << ". But it is not at location i: " << i << std::endl;
+			if (generated_param.c[i] != histo_param.c[i]) {
+				std::cout << "c value (" << generated_param.c[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
 			}
 
-			double y = pow(M_E, log((rst.first)->second) - r * beta);
-			double a = c / (y * pow(M_E, r));
+			double y = pow(M_E, log((rst.first)->second) - generated_param.r[i] * generated_param.beta[i]);
+			double a = generated_param.c[i] / (y * pow(M_E, generated_param.r[i]));
 
 			if (a < this->hash[i]) {
 				this->hash[i] = a;
@@ -127,15 +142,7 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 	this->histogram_map_lock.lock();
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 		unsigned long label = it->first;
-		struct hist_elem new_elem;
-		std::default_random_engine r_generator(label);
-		std::default_random_engine c_generator(label / 2);
-		std::default_random_engine beta_generator(label);
-		for (int i = 0; i < SKETCH_SIZE; i++) {
-			new_elem.r[i] = gamma_dist(r_generator);
-			new_elem.beta[i] = uniform_dist(beta_generator);
-			new_elem.c[i] = gamma_dist(c_generator);
-		}
+		struct hist_elem new_elem = this->construct_hist_elem(label);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
 	}
 

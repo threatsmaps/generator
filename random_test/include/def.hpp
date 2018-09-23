@@ -40,6 +40,7 @@ struct hist_elem {
 // std::default_random_engine c_generator(12);
 // std::default_random_engine beta_generator(3);
 std::gamma_distribution<double> gamma_dist(2.0, 1.0);
+// std::gamma_distribution<double> gamma_dist2(2.0, 1.0);
 std::uniform_real_distribution<double> uniform_dist(0.0, 1.0);
 
 #endif

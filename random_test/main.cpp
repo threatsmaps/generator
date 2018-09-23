@@ -25,7 +25,7 @@ void * stream_thread(void *threadid) {
 		hist->update(labels[i % 10], true, false, param_map);
 	}
 	pthread_exit(NULL);
-} 
+}
 
 int main()
 {
@@ -34,7 +34,48 @@ int main()
 	pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
+		
+	for (int i = 0; i < 10; i++) {
+		struct hist_elem elem = hist->construct_hist_elem(labels[i]);
+		param_map.insert(std::pair<unsigned long, struct hist_elem>(labels[i], elem));		
+	}
 
+	for (int j = 0; j < 10; j++) {
+		std::map<unsigned long, struct hist_elem>::iterator it;
+
+                it = param_map.find(labels[j]);
+                if (it == param_map.end()){
+                        std::cout << "Label: " << labels[j] << " should exist in param map, but it does not. " << std::endl;
+                        return -1;
+                }
+                struct hist_elem histo_param = it->second;		
+
+		// std::default_random_engine r_generator(labels[j]);
+                // std::default_random_engine c_generator(labels[j] / 2);
+                // std::default_random_engine beta_generator(labels[j]);
+		struct hist_elem generated_param = hist->construct_hist_elem(labels[j]);
+                for (int i = 0; i < SKETCH_SIZE; i++) {
+                        // Compute the new hash value a.
+                        // double r = gamma_dist(r_generator);
+                        // double beta = uniform_dist(beta_generator);
+                        // double c = gamma_dist(c_generator);
+			double r = generated_param.r[i];
+			double c = generated_param.c[i];
+			double beta = generated_param.beta[i];
+
+                        if (r != histo_param.r[i]) {
+                                std::cout << "r value (" << r << ") should be the same for label: " << labels[j] << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
+                        }
+                        if (beta != histo_param.beta[i]) {
+                                std::cout << "beta value (" << beta << ") should be the same for label: " << labels[j] << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
+                        }
+                        if (c != histo_param.c[i]) {
+                                std::cout << "c value (" << c << ") should be the same for label: " << labels[j] << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
+                        }
+		}	
+	}
+
+/*	
 	for (int i = 0; i < 10; i++) {
 		hist->update(labels[i], false, true, param_map);
 	}
@@ -60,5 +101,6 @@ int main()
 			pthread_join(threads[i], NULL);
 		}
 	}
+*/	
 	return 0;
 }
