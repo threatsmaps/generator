@@ -4,8 +4,8 @@
 #include "include/histogram.hpp"
 #include "include/def.hpp"
 
-#define NUM_THREADS 2
-#define SINGLE 1
+#define NUM_THREADS 5
+#define SINGLE 0
 
 int DECAY;
 float LAMBDA;
@@ -13,7 +13,7 @@ float LAMBDA;
 unsigned long labels[10] = {17801, 17802, 17803, 17804, 17805, 391754189065, 56438927594, 58942375902, 5743829047, 74389274};
 std::map<unsigned long, struct hist_elem> param_map;
 
-/*
+
 void * stream_thread(void *threadid) {
 	long tid;
 	tid = (long)threadid;
@@ -21,17 +21,18 @@ void * stream_thread(void *threadid) {
 
 	for (int i = 0; i < 10; i++) {
 		std::cout << "Thread ID: " << tid << std::endl;
-		hist->update(labels[i % 10], true, false, param_map);
+		hist->decay(true);
+		hist->update(labels[i], false, param_map);
 	}
 	pthread_exit(NULL);
 }
-*/
+
 
 int main()
 {
 	DECAY = 10;
 	LAMBDA = 0.02;
-	// pthread_t threads[NUM_THREADS];
+	pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
 	/*for (int i = 0; i < 10; i++) {
@@ -74,7 +75,6 @@ int main()
                 	hist->update(labels[i], false, param_map);
         	}
 	}
-	/*
 	else {
 		for (int i = 0; i < NUM_THREADS; i++) {
 			std::cout <<  "main() : creating thread, " << i << std::endl;
@@ -89,6 +89,5 @@ int main()
 			pthread_join(threads[i], NULL);
 		}
 	}
-	*/
 	return 0;
 }
