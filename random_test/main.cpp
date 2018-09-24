@@ -53,26 +53,24 @@ int main()
 	}*/
 
 
-	std::cout << std::endl << std::endl << "update true" << std::endl << "-----------";
+	std::cout << "Base Update" << std::endl << "--------------" << std::endl;
 	for (int i = 0; i < 10; i++) {
 		hist->update(labels[i], true, param_map);
 	}
 
-
-	std::cout << std::endl << std::endl << "create_sketch" << std::endl << "-----------";
+	std::cout << "Sketch Creation" << std::endl << "---------------" << std::endl;
 	hist->create_sketch(param_map);
 
 	if (SINGLE) {
-
-					std::cout << std::endl << std::endl << "update false 1" << std::endl << "-----------";
+		std::cout << "First Streaming Update" << std::endl << "---------------" << std::endl;
+		hist->decay(true);
         	for (int i = 0; i < 10; i++) {
-        			hist->decay(true);
                  	hist->update(labels[i], false, param_map);
         	}
 
-						std::cout << std::endl << std::endl << "update false 2" << std::endl << "-----------";
+		hist->decay(true);
+		std::cout << "Second Streaming Update" << std::endl << "---------------" << std::endl;
         	for (int i = 0; i < 10; i++) {
-        			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
 	}

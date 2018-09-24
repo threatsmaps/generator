@@ -32,18 +32,19 @@ Histogram::~Histogram(){
 }
 
 struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
-	std::cout << "(construct_hist_elem) Label: " << label << std::endl;
 	struct hist_elem new_elem;
 	std::default_random_engine r_generator(label);
 	std::default_random_engine c_generator(label / 2);
 	std::default_random_engine beta_generator(label);
+	std::cout << "(new construction) c = ";
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		new_elem.r[i] = gamma_dist(r_generator);
 		new_elem.beta[i] = uniform_dist(beta_generator);
 		new_elem.c[i] = gamma_dist(c_generator);
-		std::cout << i << "--c=" << 	new_elem.c[i] <<  std::endl;
+		std::cout << new_elem.c[i] << " ";
 	}
-	std::cout << "------" << std::endl;
+	std::cout << std::endl;
+	gamma_dist.reset();
 	return new_elem;
 }
 
@@ -67,13 +68,13 @@ void Histogram::decay(bool increment_t) {
 void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b) {
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		if (a.r[i] != b.r[i]) {
-			std::cout << "LABEL["<<label<<"]r got " << a.r[i] << "expected " << b.r[i] << " at " << i <<  std::endl;
+			std::cout << "LABEL["<<label<<"] r: Got " << b.r[i] << ". Expected " << a.r[i] << " at " << i <<  std::endl;
 		}
 		if (a.beta[i] != b.beta[i]) {
-			std::cout << "LABEL["<<label<<"]beta got " << a.beta[i] << "expected " << b.beta[i] << " at " << i <<  std::endl;
+			std::cout << "LABEL["<<label<<"] beta: Got " << b.beta[i] << ". Expected " << a.beta[i] << " at " << i <<  std::endl;
 		}
 		if (a.c[i] != b.c[i]) {
-			std::cout << "LABEL["<<label<<"]c got " << a.c[i] << "expected " << b.c[i] << " at " << i <<  std::endl;
+			std::cout << "LABEL["<<label<<"] c: Got " << b.c[i] << ". Expected " << a.c[i] << " at " << i <<  std::endl;
 		}
 	}
 }
@@ -109,10 +110,11 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 		}
 		struct hist_elem histo_param = basemapit->second;
 		struct hist_elem generated_param = this->construct_hist_elem(label);
+		std::cout << "(apre construction) c = ";
 		for (int k = 0; k < SKETCH_SIZE; k++) {
-			std::cout << k << "--c=" <<	generated_param.c[k] <<  std::endl;
+			std::cout << generated_param.c[k] << " ";
 		}
-		std::cout << "------" << std::endl;
+		std::cout << std::endl;
 
 		this->comp(label, histo_param, generated_param);
 
@@ -120,7 +122,6 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 			double r = generated_param.r[i];
 			double beta = generated_param.beta[i];
 			double c = generated_param.c[i];
-			/* Compute the new hash value a. */
 			double y = pow(M_E, log((rst.first)->second) - r * beta);
 			double a = c / (y * pow(M_E, r));
 
@@ -154,7 +155,6 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 	}
 
 	for (int i = 0; i < SKETCH_SIZE; i++) {
-		/* Compute the hash value a. */
 		std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();
 		unsigned long label = histoit->first;
 		std::map<unsigned long, struct hist_elem>::iterator basemapit;
@@ -163,12 +163,9 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 			std::cout << "Label: " << label << " should exist in param map, but it does not. " << std::endl;
 			return;
 		}
-		new_elem = this->construct_hist_elem(label);
-		new_elem = this->construct_hist_elem(label);
-		new_elem = this->construct_hist_elem(label);
-		new_elem = this->construct_hist_elem(label);
+		// new_elem = this->construct_hist_elem(label);
 		struct hist_elem histo_param = basemapit->second;
-		this->comp(label, new_elem, histo_param);
+		// this->comp(label, new_elem, histo_param);
 		double y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
 		double a_i = histo_param.c[i] / (y * pow(M_E, histo_param.r[i]));
 		unsigned long s_i = histoit->first;
