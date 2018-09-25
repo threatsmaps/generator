@@ -79,6 +79,13 @@ wget_large:
 		number=`expr $$number + 1` ; \
 	done
 
+wget_attack_large:
+	number=0 ; while [ $$number -le 5 ] ; do \
+		python preprocess-camflow.py $$number test_edges_wget_large.txt wget_data_large/base_test/base-wget-attack-$$number.txt wget_data_large/stream_test/stream-wget-attack-$$number.txt ; \
+		number=`expr $$number + 1` ; \
+	done
+
+
 
 
 
