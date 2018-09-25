@@ -77,7 +77,8 @@ def model(train_files, train_dir_name, num_trials, threshold_metrics, nums_stds)
 			best_medoids = None	# A vector contains all medoids of clusters and their members (see @Medoid class in @medoids.py).
 
 			# for num_clusters in range(2, sketches.shape[0]):	# At least 2 cluster and at most every sketch belongs to a different cluster.
-			for num_clusters in range(2, 6):	# Try 2 - 5 for now.
+			max_cluster_num = min(sketches.shape[0], 6)	# Some parameter may create very small number of possible clusters.
+			for num_clusters in range(2, max_cluster_num):	# Try 2 - max_cluster_num for now.
 				for trial in range(num_trials):	# We run many trials for a given number of clusters for best performance.
 					# We use @_k_medoids_spawn_once from @medoids.py for computation.
 					_, medoids = _k_medoids_spawn_once(points=range(sketches.shape[0]), k=num_clusters, distance=distance, max_iterations=1000, verbose=False)
