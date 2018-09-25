@@ -22,7 +22,7 @@
 Histogram* Histogram::histogram;
 
 Histogram* Histogram::get_instance() {
-	if (!histogram) 
+	if (!histogram)
 		histogram = new Histogram();
 	return histogram;
 }
@@ -32,7 +32,7 @@ Histogram::~Histogram(){
 }
 
 struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
-	std::cout << "(construct_hist_elem) Label: " << label << std::endl; 
+	std::cout << "(construct_hist_elem) Label: " << label << std::endl;
 	struct hist_elem new_elem;
 	std::default_random_engine r_generator(label);
 	std::default_random_engine c_generator(label / 2);
@@ -62,19 +62,33 @@ void Histogram::decay(bool increment_t) {
 	}
 }
 
+void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b) {
+	for (int i = 0; i < SKETCH_SIZE; i++) {
+		if (a.r[i] != b.r[i]) {
+			std::cout << "LABEL["<<label<<"]r value (" << a.r[i] << ") but it is not at location i: " << i << ", which is: " << b.r[i] << std::endl;
+		}
+		if (a.beta[i] != b.beta[i]) {
+			std::cout << "LABEL["<<label<<"]beta value (" << a.beta[i] << ") should be the same but it is not at location i: " << i << ", which is: " << b.beta[i] << std::endl;
+		}
+		if (a.c[i] != b.c[i]) {
+			std::cout << "LABEL["<<label<<"]c value (" << a.c[i] << ") should be the same but it is not at location i: " << i <<", which is: " << b.c[i] <<  std::endl;
+		}
+	}
+}
+
 /*!
  * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value.
- * 
+ *
  * @increment_t: if CHUNKIFY, we only decay the value once.
  * @base: if true, we do not update hash. We only update hash during streaming.
- * 
+ *
  * We decay every element in the histogram every DECAY updates.
  * We lock the whole operation here.
  *
  */
 void Histogram::update(unsigned long label, bool base, std::map<unsigned long, struct hist_elem>& param_map) {
 	this->histogram_map_lock.lock();
-	
+
 	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
 	double counter = 1;
 	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
@@ -92,22 +106,14 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 			return;
 		}
 		struct hist_elem histo_param = basemapit->second;
-
 		struct hist_elem generated_param = this->construct_hist_elem(label);
+
+		this->comp(label, histo_param, generated_param);
+
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			double r = generated_param.r[i];
 			double beta = generated_param.beta[i];
 			double c = generated_param.c[i];
-			if (r != histo_param.r[i]) {
-				std::cout << "r value (" << r << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
-			}
-			if (beta != histo_param.beta[i]) {
-				std::cout << "beta value (" << beta << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
-			}
-			if (c != histo_param.c[i]) {
-				std::cout << "c value (" << c << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
-			}
-			for (int i = 0; i < SKETCH_SIZE; i++) {
 			/* Compute the new hash value a. */
 			double y = pow(M_E, log((rst.first)->second) - r * beta);
 			double a = c / (y * pow(M_E, r));
@@ -117,7 +123,6 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 				this->sketch[i] = (rst.first)->first;
 			}
 		}
-		}
 	}
 	this->histogram_map_lock.unlock();
 	return;
@@ -126,7 +131,7 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 /*!
  * @brief Create (and initialize) a sketch after the base graph has been proceed by GraphChi.
  *
- * Base graph is small. We can save some local sketch parameters for ease of coding. 
+ * Base graph is small. We can save some local sketch parameters for ease of coding.
  * This function is called only once as initialization.
  * We lock the whole operation.
  *
@@ -135,7 +140,7 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 	this->histogram_map_lock.lock();
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 		unsigned long label = it->first;
-		std::cout << "(create_sketch) Label: " << label << std::endl; 
+		std::cout << "(create_sketch) Label: " << label << std::endl;
 		struct hist_elem new_elem = this->construct_hist_elem(label);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
 		//check return value
@@ -164,7 +169,7 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 			}
 			histo_param = basemapit->second;
 			y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
-			double a = histo_param.c[i] / (y * pow(M_E, histo_param.r[i])); 
+			double a = histo_param.c[i] / (y * pow(M_E, histo_param.r[i]));
 			if (a < a_i) {
 				a_i = a;
 				s_i = histoit->first;

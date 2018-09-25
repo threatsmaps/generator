@@ -34,10 +34,10 @@ int main()
 	// pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
-/*		
+/*
 	for (int i = 0; i < 10; i++) {
 		struct hist_elem elem = hist->construct_hist_elem(labels[i]);
-		param_map.insert(std::pair<unsigned long, struct hist_elem>(labels[i], elem));		
+		param_map.insert(std::pair<unsigned long, struct hist_elem>(labels[i], elem));
 	}
 
 	for (int j = 0; j < 10; j++) {
@@ -48,7 +48,7 @@ int main()
                         std::cout << "Label: " << labels[j] << " should exist in param map, but it does not. " << std::endl;
                         return -1;
                 }
-                struct hist_elem histo_param = it->second;		
+                struct hist_elem histo_param = it->second;
 
 		// std::default_random_engine r_generator(labels[j]);
                 // std::default_random_engine c_generator(labels[j] / 2);
@@ -72,7 +72,7 @@ int main()
                         if (c != histo_param.c[i]) {
                                 std::cout << "c value (" << c << ") should be the same for label: " << labels[j] << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
                         }
-		}	
+		}
 	}
 */
 	for (int i = 0; i < 10; i++) {
@@ -96,7 +96,7 @@ int main()
 		for (int i = 0; i < NUM_THREADS; i++) {
 			std::cout << "main() : creating thread, " << i << std::endl;
 			int rc = pthread_create(&threads[i], NULL, stream_thread, (void *)i);
-      
+
 			if (rc) {
 				std::cout << "Error: unable to create thread," << rc << std::endl;
 				exit(-1);

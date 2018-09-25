@@ -22,7 +22,7 @@
 
 /* We use singleton design to create a single instance of a histogram.
  * This is not thread-safe. A proper locking mechanism is needed.
- * 
+ *
  * Current implementation uses a simple ordered Map.
  */
 
@@ -35,6 +35,7 @@ public:
 	void update(unsigned long label, bool base, std::map<unsigned long, struct hist_elem>& param_map);
 	void create_sketch(std::map<unsigned long, struct hist_elem>& param_map);
 	void record_sketch(FILE* fp);
+	void comp(unsigned long label, struct hist_elem a, struct hist_elem b);
 
 private:
 	static Histogram* histogram;
