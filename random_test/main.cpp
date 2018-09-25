@@ -51,24 +51,31 @@ int main()
 		struct hist_elem generated_param = hist->construct_hist_elem(labels[j]);
 		hist->comp(labels[j], histo_param, generated_param);
 	}
-/*
+
+
+	std::cout << std::endl << std::endl << "update true" << std::endl << "-----------";
 	for (int i = 0; i < 10; i++) {
 		hist->update(labels[i], true, param_map);
 	}
 
+
+	std::cout << std::endl << std::endl << "create_sketch" << std::endl << "-----------";
 	hist->create_sketch(param_map);
 
 	if (SINGLE) {
+
+					std::cout << std::endl << std::endl << "update false 1" << std::endl << "-----------";
         	for (int i = 0; i < 10; i++) {
         			hist->decay(true);
                  	hist->update(labels[i], false, param_map);
         	}
+
+						std::cout << std::endl << std::endl << "update false 2" << std::endl << "-----------";
         	for (int i = 0; i < 10; i++) {
         			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
 	}
-	*/
 	/*
 	else {
 		for (int i = 0; i < NUM_THREADS; i++) {
