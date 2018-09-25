@@ -65,13 +65,13 @@ void Histogram::decay(bool increment_t) {
 void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b) {
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		if (a.r[i] != b.r[i]) {
-			std::cout << "LABEL["<<label<<"]r value (" << a.r[i] << ") but it is not at location i: " << i << ", which is: " << b.r[i] << std::endl;
+			std::cout << "LABEL["<<label<<"]r got " << a.r[i] << "expected " << b.r[i] << " at " << i <<  std::endl;
 		}
 		if (a.beta[i] != b.beta[i]) {
-			std::cout << "LABEL["<<label<<"]beta value (" << a.beta[i] << ") should be the same but it is not at location i: " << i << ", which is: " << b.beta[i] << std::endl;
+			std::cout << "LABEL["<<label<<"]beta got " << a.beta[i] << "expected " << b.beta[i] << " at " << i <<  std::endl;
 		}
 		if (a.c[i] != b.c[i]) {
-			std::cout << "LABEL["<<label<<"]c value (" << a.c[i] << ") should be the same but it is not at location i: " << i <<", which is: " << b.c[i] <<  std::endl;
+			std::cout << "LABEL["<<label<<"]c got " << a.c[i] << "expected " << b.c[i] << " at " << i <<  std::endl;
 		}
 	}
 }

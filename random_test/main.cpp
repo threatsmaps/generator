@@ -84,7 +84,7 @@ int main()
 	if (SINGLE) {
         	for (int i = 0; i < 10; i++) {
         			hist->decay(true);
-                	hist->update(labels[i], false, param_map);
+                 	hist->update(labels[i], false, param_map);
         	}
         	for (int i = 0; i < 10; i++) {
         			hist->decay(true);
