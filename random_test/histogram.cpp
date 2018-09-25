@@ -158,6 +158,7 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 			return;
 		}
 		new_elem = this->construct_hist_elem(label);
+		new_elem = this->construct_hist_elem(label);
 		struct hist_elem histo_param = basemapit->second;
 		this->comp(label, new_elem, histo_param);
 		double y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
