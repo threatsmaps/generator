@@ -41,7 +41,9 @@ struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
 		new_elem.r[i] = gamma_dist(r_generator);
 		new_elem.beta[i] = uniform_dist(beta_generator);
 		new_elem.c[i] = gamma_dist(c_generator);
+		std::cout << 	new_elem.c[i] <<  std::endl;
 	}
+	std::cout << "------" << std::endl;
 	return new_elem;
 }
 
@@ -107,6 +109,10 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 		}
 		struct hist_elem histo_param = basemapit->second;
 		struct hist_elem generated_param = this->construct_hist_elem(label);
+		for (int k = 0; k < SKETCH_SIZE; k++) {
+			std::cout << 	generated_param.c[k] <<  std::endl;
+		}
+		std::cout << "------" << std::endl;
 
 		this->comp(label, histo_param, generated_param);
 
@@ -157,6 +163,8 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 			std::cout << "Label: " << label << " should exist in param map, but it does not. " << std::endl;
 			return;
 		}
+		new_elem = this->construct_hist_elem(label);
+		new_elem = this->construct_hist_elem(label);
 		new_elem = this->construct_hist_elem(label);
 		new_elem = this->construct_hist_elem(label);
 		struct hist_elem histo_param = basemapit->second;

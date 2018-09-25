@@ -62,7 +62,7 @@ int main()
 	std::cout << std::endl << std::endl << "create_sketch" << std::endl << "-----------";
 	hist->create_sketch(param_map);
 
-	/*if (SINGLE) {
+	if (SINGLE) {
 
 					std::cout << std::endl << std::endl << "update false 1" << std::endl << "-----------";
         	for (int i = 0; i < 10; i++) {
@@ -75,7 +75,7 @@ int main()
         			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
-	}*/
+	}
 	/*
 	else {
 		for (int i = 0; i < NUM_THREADS; i++) {
