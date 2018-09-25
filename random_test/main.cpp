@@ -34,7 +34,7 @@ int main()
 	// pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
-	for (int i = 0; i < 10; i++) {
+	/*for (int i = 0; i < 10; i++) {
 		struct hist_elem elem = hist->construct_hist_elem(labels[i]);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(labels[i], elem));
 	}
@@ -50,7 +50,7 @@ int main()
 		struct hist_elem histo_param = it->second;
 		struct hist_elem generated_param = hist->construct_hist_elem(labels[j]);
 		hist->comp(labels[j], histo_param, generated_param);
-	}
+	}*/
 
 
 	std::cout << std::endl << std::endl << "update true" << std::endl << "-----------";
@@ -62,7 +62,7 @@ int main()
 	std::cout << std::endl << std::endl << "create_sketch" << std::endl << "-----------";
 	hist->create_sketch(param_map);
 
-	if (SINGLE) {
+	/*if (SINGLE) {
 
 					std::cout << std::endl << std::endl << "update false 1" << std::endl << "-----------";
         	for (int i = 0; i < 10; i++) {
@@ -75,11 +75,11 @@ int main()
         			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
-	}
+	}*/
 	/*
 	else {
 		for (int i = 0; i < NUM_THREADS; i++) {
-			std::cout << "main() : creating thread, " << i << std::endl;
+			std::cout <<  "main() : creating thread, " << i << std::endl;
 			int rc = pthread_create(&threads[i], NULL, stream_thread, (void *)i);
 
 			if (rc) {

@@ -138,10 +138,11 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
  */
 void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_map) {
 	this->histogram_map_lock.lock();
+	struct hist_elem new_elem;
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 		unsigned long label = it->first;
 		std::cout << "(create_sketch) Label: " << label << std::endl;
-		struct hist_elem new_elem = this->construct_hist_elem(label);
+		new_elem = this->construct_hist_elem(label);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
 		//check return value
 	}
@@ -156,7 +157,9 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 			std::cout << "Label: " << label << " should exist in param map, but it does not. " << std::endl;
 			return;
 		}
+		new_elem = this->construct_hist_elem(label);
 		struct hist_elem histo_param = basemapit->second;
+		this->comp(label, new_elem, histo_param);
 		double y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
 		double a_i = histo_param.c[i] / (y * pow(M_E, histo_param.r[i]));
 		unsigned long s_i = histoit->first;
