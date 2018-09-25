@@ -187,3 +187,4 @@ xcuserdata
 *.db
 opentuner.log
 opentuner.db
+streaming/data/train_edges_wget_large.txt
