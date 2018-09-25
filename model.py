@@ -22,9 +22,8 @@ from opentuner.search.manipulator import IntegerParameter
 from opentuner.search.manipulator import FloatParameter
 from opentuner.search.manipulator import EnumParameter
 from opentuner.measurement import MeasurementInterface
-from opentuner.search.objective import MaximizeAccuracy
 from opentuner.resultsdb.models import Result
-from opentuner.measurement.inputmanager import FixedInputManager
+
 
 # Marcos.
 NUM_TRIALS = 20
@@ -54,34 +53,23 @@ class Unicorn(MeasurementInterface):
 	'''
 	Use OpenTuner to turn hyperparameters used by Unicorn System.
 	'''
-	def __init__(self, args):
-		super(Unicorn, self).__init__(args,
-			input_manager=FixedInputManager(),
-			objective=MaximizeAccuracy())
-
 	def manipulator(self):
 		'''
 		Define the search space by creating a ConfigurationManipulator
 		'''
 		manipulator = ConfigurationManipulator()
-		manipulator.add_parameter(IntegerParameter('decay', 100, 150))
-		manipulator.add_parameter(IntegerParameter('interval', 1500, 2000))
-		manipulator.add_parameter(IntegerParameter('chunk-size', 15, 20))
-		manipulator.add_parameter(FloatParameter('lambda', 0.05, 0.3))
+		manipulator.add_parameter(IntegerParameter('decay', 10, 15))
+		manipulator.add_parameter(IntegerParameter('interval', 50, 52))
+		manipulator.add_parameter(IntegerParameter('chunk-size', 3, 5))
+		manipulator.add_parameter(FloatParameter('lambda', 0.05, 0.1))
 		manipulator.add_parameter(EnumParameter('threshold-metric', ['mean', 'max']))
-		manipulator.add_parameter(FloatParameter('num-stds', 3.5, 6.0))
+		manipulator.add_parameter(FloatParameter('num-stds', 0.5, 5.0))
 		manipulator.add_parameter(IntegerParameter('sketch-size', 2000, 2500))
 		manipulator.add_parameter(IntegerParameter('k-hops', 3, 4))
 		return manipulator
 
 	def run(self, desired_result, input, limit):
 		cfg = desired_result.configuration.data
-
-		print "Configuration: " + cfg['threshold-metric'] + " with " + str(cfg['num-stds'])
-		print "\t\t Decay: " + str(cfg['decay'])
-		print "\t\t Interval: " + str(cfg['interval'])
-		print "\t\t Lambda: " + str(cfg['lambda'])
-		print "\t\t Chunk Size: " + str(cfg['chunk-size'])
 
 		# Compile GraphChi with different flags.
 		gcc_cmd = 'g++-4.9 -std=c++11 -g -O3 -I/usr/local/include/ -I./src/  -fopenmp -Wall -Wno-strict-aliasing -lpthread'
@@ -126,7 +114,6 @@ class Unicorn(MeasurementInterface):
 			run_cmd += ' chunkify 1 '
 			run_cmd += ' chunk_size ' + str(cfg['chunk-size'])
 
-			print run_cmd
 			run_result = self.call_program(run_cmd)
 			assert run_result['returncode'] == 0
 
@@ -163,7 +150,6 @@ class Unicorn(MeasurementInterface):
 			run_cmd += ' chunkify 1 '
 			run_cmd += ' chunk_size ' + str(cfg['chunk-size'])
 
-			print run_cmd
 			run_result = self.call_program(run_cmd)
 			assert run_result['returncode'] == 0
 
@@ -194,6 +180,11 @@ class Unicorn(MeasurementInterface):
 		# Testing
 		test_accuracy = test(sketch_test_files, test_sketch_dir_name, models, cfg['threshold-metric'], cfg['num-stds'])
 		print "Test Accuracy: " + str(test_accuracy)
+		print "Configuration: " + cfg['threshold-metric'] + " with " + str(cfg['num-stds'])
+		print "\t Decay: " + str(cfg['decay'])
+		print "\t Interval: " + str(cfg['interval'])
+		print "\t Lambda: " + str(cfg['lambda'])
+		print "\t Chunk Size: " + str(cfg['chunk-size'])
 	
 		# For next experiment, remove sketch files from this experiment
 		for sketch_train_file in sketch_train_files:
@@ -219,7 +210,7 @@ class Unicorn(MeasurementInterface):
 		except Exception as e:
 			print(e)
 
-		return Result(time=1.0, accuracy=test_accuracy)
+		return Result(accuracy=test_accuracy)
 
 	def save_final_config(self, configuration):
 		"""called at the end of tuning"""

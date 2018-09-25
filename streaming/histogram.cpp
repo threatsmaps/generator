@@ -12,11 +12,8 @@
  */
 #include "include/histogram.hpp"
 #include "include/kissdb.h"
-#include "include/storage.hpp"
 
-#include <fstream>
 #include <math.h>
-
 
 Histogram* Histogram::histogram;
 
@@ -38,36 +35,18 @@ Histogram::~Histogram(){
  *
  */
 void Histogram::insert_label(unsigned long label) {
-	// FILE * fp = fopen("histo.txt", "a+");
-	// if (fp == NULL) {
-	// 	logstream(LOG_ERROR) << "Cannot open the histogram file to write" << ". Error code: " << strerror(errno) << std::endl;
-	// 	assert(false);
-	// }
 	struct hist_elem new_elem;
-	if (ks.get_item(&label, &new_elem)) {
-	// if (KISSDB_get(&db, &label, &new_elem)) {
+	if (KISSDB_get(&db, &label, &new_elem)) {
 		/* If label does not exist in the database*/
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			new_elem.r[i] = gamma_dist(r_generator);
 			new_elem.beta[i] = uniform_dist(beta_generator);
 			new_elem.c[i] = gamma_dist(c_generator);
 		}
-		// if (KISSDB_put(&db, &label, &new_elem)) {
-		if (ks.put_item(&label, &new_elem)) {
+		if (KISSDB_put(&db, &label, &new_elem)) {
 			logstream(LOG_ERROR) << "KISSDB_put failed." << std::endl;
 		}
-
-		// for (int i = 0; i < SKETCH_SIZE; i++) {
-		// 	fprintf(fp,"%f ", new_elem.r[i]);
-		// }
-		// for (int i = 0; i < SKETCH_SIZE; i++) {
-		// 	fprintf(fp,"%f ", new_elem.c[i]);
-		// }
-		// for (int i = 0; i < SKETCH_SIZE; i++) {
-		// 	fprintf(fp,"%f ", new_elem.beta[i]);
-		// }
 	}
-	// fclose(fp);
 	double counter = 1;
 	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
 	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
@@ -105,15 +84,13 @@ void Histogram::update(unsigned long label, bool increment_t) {
 	/* Now we add the new element or update the existing element. */
 	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
 	struct hist_elem new_elem;
-	if (ks.get_item(&label, &new_elem)) {
-	// if (KISSDB_get(&db, &label, &new_elem)) {
+	if (KISSDB_get(&db, &label, &new_elem)) {
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			new_elem.r[i] = gamma_dist(r_generator);
 			new_elem.beta[i] = uniform_dist(beta_generator);
 			new_elem.c[i] = gamma_dist(c_generator);
 		}
-		if (ks.put_item(&label, &new_elem)) {
-		// if (KISSDB_put(&db, &label, &new_elem)) {
+		if (KISSDB_put(&db, &label, &new_elem)) {
 			logstream(LOG_ERROR) << "KISSDB_put failed." << std::endl;
 		}
 	}
@@ -150,8 +127,7 @@ void Histogram::create_sketch() {
 		std::map<unsigned long, double>::iterator it = this->histogram_map.begin();
 		struct hist_elem new_elem;
 		unsigned long label = it->first;
-		if (ks.get_item(&label, &new_elem)) {
-		// if (KISSDB_get(&db, &label, &new_elem)) {
+		if (KISSDB_get(&db, &label, &new_elem)) {
 			logstream(LOG_ERROR) << "Label: " << label << " should exist in unicorn.db, but it does not. " << std::endl;
 			return;
 		}
@@ -160,8 +136,7 @@ void Histogram::create_sketch() {
 		unsigned long s_i = it->first;
 		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 			label = it->first;
-			if (ks.get_item(&label, &new_elem)) {
-			// if (KISSDB_get(&db, &label, &new_elem)) {
+			if (KISSDB_get(&db, &label, &new_elem)) {
 				logstream(LOG_ERROR) << "Label: " << label << " should exist in unicorn.db, but it does not. " << std::endl;
 				return;
 			}
@@ -221,9 +196,9 @@ void Histogram::record_sketch(FILE* fp) {
  *
  */
 void Histogram::print_histogram() {
-	// std::map<unsigned long, double>::iterator it;
-	// logstream(LOG_INFO) << "Printing histogram map to the console..." << std::endl;
+	// std::map<unsigned long, struct hist_elem>::iterator it;
+	// logstream(LOG_DEBUG) << "Printing histogram map to the console..." << std::endl;
 	// for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
-	// 	logstream(LOG_INFO) << "[" << it->first << "]->" << it->second << "  ";
+	// 	logstream(LOG_INFO) << "[" << it->first << "]->" << (it->second).cnt << "  ";
 	return;
 }
