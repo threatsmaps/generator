@@ -71,8 +71,13 @@ wget_attack:
 	cd wget_data && mkdir -p test
 	python preprocess-camflow.py 0 attack_edges_wget.txt wget_data/test/base-wget-attack.txt wget_data/test/stream-wget-attack.txt
 
-
-
+wget_large:
+	mkdir -p wget_data_large
+	cd wget_data_large && mkdir -p base_train && mkdir -p stream_train && mkdir -p base_test && mkdir -p stream_test
+	number=0 ; while [ $$number -le 99 ] ; do \
+		python preprocess-camflow.py $$number train_edges_wget_large.txt wget_data_large/base_train/base-wget-$$number.txt wget_data_large/stream_train/stream-wget-$$number.txt ; \
+		number=`expr $$number + 1` ; \
+	done
 
 
 

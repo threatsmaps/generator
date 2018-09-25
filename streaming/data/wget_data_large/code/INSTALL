@@ -1,0 +1,16 @@
+# This file contains instructions on how to install an older version of wget (1.17) on Fedora 27
+# Depends on where you want to install it, you may or may not need `sudo`.
+
+sudo dnf install -y gnutls-devel
+cd /usr/share
+wget https://ftp.gnu.org/gnu/wget/wget-1.17.tar.gz
+tar xvzf wget-1.17.tar.gz
+rm wget-1.17.tar.gz
+cd wget-1.17
+./configure
+make
+make install
+make clean
+
+# Make sure in the VM you boot directly to the right kernel (i.e., CamFlow Kernel) by setting up the default kernel to boot:
+# https://docs.fedoraproject.org/f26/system-administrators-guide/kernel-module-driver-configuration/Working_with_the_GRUB_2_Boot_Loader.html
