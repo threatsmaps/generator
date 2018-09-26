@@ -34,7 +34,7 @@ int main()
 	pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
-		
+/*		
 	for (int i = 0; i < 10; i++) {
 		struct hist_elem elem = hist->construct_hist_elem(labels[i]);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(labels[i], elem));		
@@ -74,8 +74,8 @@ int main()
                         }
 		}	
 	}
-
-/*	
+*/
+	
 	for (int i = 0; i < 10; i++) {
 		hist->update(labels[i], false, true, param_map);
 	}
@@ -101,6 +101,6 @@ int main()
 			pthread_join(threads[i], NULL);
 		}
 	}
-*/	
+
 	return 0;
 }

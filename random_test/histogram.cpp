@@ -32,6 +32,7 @@ Histogram::~Histogram(){
 }
 
 struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
+	std::cout << "(construct_hist_elem) Label: " << label << std::endl; 
 	struct hist_elem new_elem;
 	std::default_random_engine r_generator(label);
 	std::default_random_engine c_generator(label / 2);
@@ -142,8 +143,10 @@ void Histogram::create_sketch(std::map<unsigned long, struct hist_elem>& param_m
 	this->histogram_map_lock.lock();
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 		unsigned long label = it->first;
+		std::cout << "(create_sketch) Label: " << label << std::endl; 
 		struct hist_elem new_elem = this->construct_hist_elem(label);
 		param_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
+		//check return value
 	}
 
 	for (int i = 0; i < SKETCH_SIZE; i++) {
