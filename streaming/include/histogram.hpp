@@ -31,8 +31,7 @@ class Histogram {
 public:
 	static Histogram* get_instance();
 	~Histogram();
-	void insert_label(unsigned long label);
-	void update(unsigned long label, bool increment_t);
+	void update(unsigned long label, bool increment_t, bool base);
 	void create_sketch();
 	void get_lock();
 	void release_lock();
