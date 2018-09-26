@@ -29,7 +29,7 @@ void * stream_thread(void *threadid) {
 
 int main()
 {
-	DECAY = 100;
+	DECAY = 10;
 	LAMBDA = 0.02;
 	// pthread_t threads[NUM_THREADS];
 
@@ -83,9 +83,11 @@ int main()
 
 	if (SINGLE) {
         	for (int i = 0; i < 10; i++) {
+        			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
         	for (int i = 0; i < 10; i++) {
+        			hist->decay(true);
                 	hist->update(labels[i], false, param_map);
         	}
 	}

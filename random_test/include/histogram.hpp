@@ -31,7 +31,7 @@ public:
 	static Histogram* get_instance();
 	~Histogram();
 	struct hist_elem construct_hist_elem(unsigned long label);
-	void populate(unsigned long label);
+	void decay(bool increment_t);
 	void update(unsigned long label, bool base, std::map<unsigned long, struct hist_elem>& param_map);
 	void create_sketch(std::map<unsigned long, struct hist_elem>& param_map);
 	void record_sketch(FILE* fp);

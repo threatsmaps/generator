@@ -46,13 +46,19 @@ struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
 }
 
 
-void Histogram::populate(unsigned long label) {
-	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
-	double counter = 1;
-	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
-	if (rst.second == false) {
-		std::cout << "The label " << label << " is already in the map. Updating the sketch and its hash." << std::endl;
-		(rst.first)->second++;
+void Histogram::decay(bool increment_t) {
+	if (increment_t) /* We use this variable to make sure, when we do CHUNKIFY, we only update once*/
+		this->t++;
+	/* Decay first if needed. Decay only in streaming. */
+	if (this->t >= DECAY) {
+		std::map<unsigned long, double>::iterator it;
+		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
+			it->second *= pow(M_E, -LAMBDA); /* M_E is defined in <cmath>. */
+		}
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			this->hash[i] *= pow(M_E, -LAMBDA);
+		}
+		this->t = 0; /* Reset this timer. */
 	}
 }
 
