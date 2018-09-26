@@ -2,7 +2,6 @@
 #include <random>
 
 #include "include/histogram.hpp"
-#include "include/helper.hpp"
 #include "include/def.hpp"
 
 #define NUM_THREADS 2
@@ -77,14 +76,17 @@ int main()
 	}
 */
 	for (int i = 0; i < 10; i++) {
-		hist->populate(labels[i]);
+		hist->update(labels[i], true, param_map);
 	}
 
 	hist->create_sketch(param_map);
 
 	if (SINGLE) {
         	for (int i = 0; i < 10; i++) {
-                	hist->update(labels[i], param_map);
+                	hist->update(labels[i], false, param_map);
+        	}
+        	for (int i = 0; i < 10; i++) {
+                	hist->update(labels[i], false, param_map);
         	}
 	}
 	/*

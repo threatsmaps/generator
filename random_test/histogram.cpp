@@ -66,33 +66,38 @@ void Histogram::populate(unsigned long label) {
  * We lock the whole operation here.
  *
  */
-void Histogram::update(unsigned long label, std::map<unsigned long, struct hist_elem>& param_map) {
+void Histogram::update(unsigned long label, bool base, std::map<unsigned long, struct hist_elem>& param_map) {
 	this->histogram_map_lock.lock();
-	/* Now we add the new element or update the existing element in the histogram map. 
-	 * This is done both in base and streaming part of the graph.
-	 */
-	/* Now we update the hash if needed.
-	 * Hash updates only happen in streaming.
-	 */
-	std::map<unsigned long, struct hist_elem>::iterator basemapit;
-
-	basemapit = param_map.find(label);
-	if (basemapit == param_map.end()){
-		std::cout << "Label: " << label << " should exist in param map, but it does not. " << std::endl;
-		return;
+	
+	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
+	double counter = 1;
+	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
+	if (rst.second == false) {
+		std::cout << "The label " << label << " is already in the map. Updating the sketch and its hash." << std::endl;
+		(rst.first)->second++;
 	}
-	struct hist_elem histo_param = basemapit->second;
 
-	struct hist_elem generated_param = this->construct_hist_elem(label);
-	for (int i = 0; i < SKETCH_SIZE; i++) {
-		if (generated_param.r[i] != histo_param.r[i]) {
-			std::cout << "r value (" << generated_param.r[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
+	if (!base) {
+		std::map<unsigned long, struct hist_elem>::iterator basemapit;
+
+		basemapit = param_map.find(label);
+		if (basemapit == param_map.end()){
+			std::cout << "Label: " << label << " should exist in param map, but it does not. " << std::endl;
+			return;
 		}
-		if (generated_param.beta[i] != histo_param.beta[i]) {
-			std::cout << "beta value (" << generated_param.beta[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
-		}
-		if (generated_param.c[i] != histo_param.c[i]) {
-			std::cout << "c value (" << generated_param.c[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
+		struct hist_elem histo_param = basemapit->second;
+
+		struct hist_elem generated_param = this->construct_hist_elem(label);
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			if (generated_param.r[i] != histo_param.r[i]) {
+				std::cout << "r value (" << generated_param.r[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
+			}
+			if (generated_param.beta[i] != histo_param.beta[i]) {
+				std::cout << "beta value (" << generated_param.beta[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
+			}
+			if (generated_param.c[i] != histo_param.c[i]) {
+				std::cout << "c value (" << generated_param.c[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
+			}
 		}
 	}
 	this->histogram_map_lock.unlock();
