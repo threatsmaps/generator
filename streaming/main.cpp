@@ -72,9 +72,7 @@ void * dynamic_graph_reader(void * info) {
 	Histogram* hist = Histogram::get_instance();
 
 	/* We create and initailize the sketch of the histogram. */
-	hist->get_lock();
 	hist->create_sketch();
-	hist->release_lock();
 
 	/* Open the file for streaming. */
 	FILE * f = fopen(stream_file.c_str(), "r");
@@ -191,10 +189,8 @@ void * dynamic_graph_reader(void * info) {
 			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
 			cnt = 0;
 			/* We first record the sketch from the updated graph. */
-			hist->get_lock();
 			logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
 			hist->record_sketch(fp);
-			hist->release_lock();
 			pthread_barrier_wait(&std::graph_barrier);
 		}
 	}
@@ -275,13 +271,11 @@ int main(int argc, const char ** argv) {
 	assert(fp != NULL);
 	Histogram* hist = Histogram::get_instance();
 
-	hist->get_lock();
 	logstream(LOG_DEBUG) << "Recording the final complete graph sketch... " << std::endl;
 	if (fp == NULL) {
 		logstream(LOG_ERROR) << "Sketch file no longer exists... " << std::endl;
 	}
 	hist->record_sketch(fp);
-	hist->release_lock();
 
 	if (ferror(fp) != 0 || fclose(fp) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file <<  std::endl;

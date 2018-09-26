@@ -31,47 +31,33 @@ Histogram::~Histogram(){
 
 /*!
  * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value.
- *
- * This function is used in the base graph for later sketch creation.
- * When creating sketch, we do not change t, i.e., decay is not taken into the account.
- *
- */
-void Histogram::insert_label(unsigned long label) {
-	double counter = 1;
-	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
-	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
-	if (rst.second == false) {
-#ifdef DEBUG
-		logstream(LOG_DEBUG) << "The label " << label << " is already in the map. Updating the value." << std::endl;
-#endif
-		(rst.first)->second++;
-	}
-	return;
-}
-
-/*!
- * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value and the sketch.
- *
- * This function is used in the streaming graph for sketch updates.
+ * 
+ * @increment_t: if CHUNKIFY, we only decay the value once.
+ * @base: if true, we do not update hash. We only update hash during streaming.
+ * 
  * We decay every element in the histogram every DECAY updates.
+ * We lock the whole operation here.
  *
  */
-void Histogram::update(unsigned long label, bool increment_t) {
+void Histogram::update(unsigned long label, bool increment_t, bool base) {
+	this->get_lock();
 	if (increment_t) /* We use this variable to make sure, when we do CHUNKIFY, we only update once*/
 		this->t++;
-	/* Decay first if needed. */
-	if (this->t >= DECAY) {
+	/* Decay first if needed. Decay only in streaming. */
+	if (!base && this->t >= DECAY) {
 		std::map<unsigned long, double>::iterator it;
 		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 			it->second *= pow(M_E, -LAMBDA); /* M_E is defined in <cmath>. */
 		}
 		for (int i = 0; i < SKETCH_SIZE; i++) {
-			hash[i] *= pow(M_E, -LAMBDA);
+			this->hash[i] *= pow(M_E, -LAMBDA);
 		}
 		this->t = 0; /* Reset this timer. */
 	}
 
-	/* Now we add the new element or update the existing element. */
+	/* Now we add the new element or update the existing element in the histogram map. 
+	 * This is done both in base and streaming part of the graph.
+	 */
 	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
 	double counter = 1;
 	rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
@@ -82,21 +68,26 @@ void Histogram::update(unsigned long label, bool increment_t) {
 		(rst.first)->second++;
 	}
 
-	/* Now we update the hash if needed. */
-	std::default_random_engine r_generator(label);
-	std::default_random_engine c_generator(label / 2);
-	std::default_random_engine beta_generator(label);
-	for (int i = 0; i < SKETCH_SIZE; i++) {
-		/* Compute the new hash value a. */
-		double r = gamma_dist(r_generator);
-		double y = pow(M_E, log((rst.first)->second) - r * uniform_dist(beta_generator));
-		double a = gamma_dist(c_generator) / (y * pow(M_E, r));
+	/* Now we update the hash if needed.
+	 * Hash updates only happen in streaming.
+	 */
+	if (!base) {
+		std::default_random_engine r_generator(label);
+		std::default_random_engine c_generator(label / 2);
+		std::default_random_engine beta_generator(label);
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			/* Compute the new hash value a. */
+			double r = gamma_dist(r_generator);
+			double y = pow(M_E, log((rst.first)->second) - r * uniform_dist(beta_generator));
+			double a = gamma_dist(c_generator) / (y * pow(M_E, r));
 
-		if (a < this->hash[i]) {
-			this->hash[i] = a;
-			this->sketch[i] = (rst.first)->first;
+			if (a < this->hash[i]) {
+				this->hash[i] = a;
+				this->sketch[i] = (rst.first)->first;
+			}
 		}
 	}
+	this->release_lock();
 	return;
 }
 
@@ -104,10 +95,12 @@ void Histogram::update(unsigned long label, bool increment_t) {
  * @brief Create (and initialize) a sketch after the base graph has been proceed by GraphChi.
  *
  * Base graph is small. We can save some local sketch parameters for ease of coding. 
- * This function is called only once.
+ * This function is called only once as initialization.
+ * We lock the whole operation.
  *
  */
 void Histogram::create_sketch() {
+	this->get_lock();
 	/* Locally save some sketch parameters. */
 	std::map<unsigned long, struct hist_elem> base_map;
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
@@ -156,6 +149,8 @@ void Histogram::create_sketch() {
 		this->sketch[i] = s_i;
 		this->hash[i] = a_i;
 	}
+	this->release_lock();
+	return;
 }
 
 void Histogram::get_lock() {
@@ -189,10 +184,12 @@ void Histogram::release_lock(){
 // }
 
 void Histogram::record_sketch(FILE* fp) {
+	this->get_lock();
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		fprintf(fp,"%lu ", this->sketch[i]);
 	}
 	fprintf(fp, "\n");
+	this->release_lock();
 	return;
 }
 

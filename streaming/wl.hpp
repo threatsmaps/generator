@@ -77,9 +77,7 @@ namespace graphchi {
 				vertex.set_data(nl);
 
 				/* Populate histogram map. */
-				hist->get_lock();
-				hist->insert_label(nl.lb[0]);
-				hist->release_lock();
+				hist->update(nl.lb[0], false, true);
 
 				/* Always schedule itself for the next iteration. 
 				 * We now always schedule every vertex to the next iteration, until a macro @next_itr says otherwise.
@@ -154,9 +152,7 @@ namespace graphchi {
 						logstream(LOG_DEBUG) << "The label string of the base vertex (with no neighbors) #" << vertex.id() << " is: " << last_itr_label << std::endl;
 #endif
 						/* Populate histogram map. */
-						hist->get_lock();
-						hist->insert_label(last_itr_label);
-						hist->release_lock();
+						hist->update(last_itr_label, false, true);
 						/* Update the vertex's label vector. */
 						nl.lb[gcontext.iteration] = last_itr_label;
 						nl.tm[gcontext.iteration] = 0; /* All timestamps of the leaf vertex is set to be 0. */
@@ -206,16 +202,14 @@ namespace graphchi {
 					/* Relabel by hashing. */
 					unsigned long new_label = hash((unsigned char *)new_label_str.c_str());
 					/* Populate histogram map, depending if we CHUNKIFY or not. */
-					hist->get_lock();
 					if (!CHUNKIFY) {
-						hist->insert_label(new_label);
+						hist->update(new_label, false, true);
 					} else {
 						std::vector<unsigned long> to_insert = chunkify((unsigned char *)new_label_str.c_str(), CHUNK_SIZE);
 						for (std::vector<unsigned long>::iterator ti = to_insert.begin(); ti != to_insert.end(); ++ti) {
-							hist->insert_label(*ti);
+							hist->update(*ti, false, true);
 						}
 					}
-					hist->release_lock();
 					/* Update the vertex's label*/
 					nl.lb[gcontext.iteration] = new_label;
 					nl.tm[gcontext.iteration] = neighborhood[0].tme[gcontext.iteration - 1];
@@ -288,11 +282,9 @@ namespace graphchi {
 						/* Update node label. */
 						vertex.set_data(nl);
 						/* Populate histogram map of all its labels. */
-						hist->get_lock();
 						for (int i = 0; i < K_HOPS + 1; i++) {
-							hist->update(nl.lb[i], true);	
+							hist->update(nl.lb[i], true, false);	
 						}
-						hist->release_lock();
 						/* Populate the labels to all of its out-going edges. */
 						for (int i = 0; i < vertex.num_outedges(); i++) {
 							graphchi_edge<EdgeDataType> * out_edge = vertex.outedge(i);
@@ -336,9 +328,7 @@ namespace graphchi {
 						}
 
 						/* Populate histogram map. */
-						hist->get_lock();
-						hist->update(nl.lb[0], true);
-						hist->release_lock();
+						hist->update(nl.lb[0], true, false);
 					}
 				}
 				/* Now node is known to the system. */
@@ -458,19 +448,17 @@ namespace graphchi {
 					/* Relabel by hashing. */
 					unsigned long new_label = hash((unsigned char *)new_label_str.c_str());
 					/* Populate histogram map. */
-					hist->get_lock();
 					if (!CHUNKIFY) {
-						hist->update(new_label, true);
+						hist->update(new_label, true, false);
 					} else {
 						std::vector<unsigned long> to_insert = chunkify((unsigned char *)new_label_str.c_str(), CHUNK_SIZE);
 						bool first = true;
 						for (std::vector<unsigned long>::iterator ti = to_insert.begin(); ti != to_insert.end(); ++ti) {
-							hist->update(*ti, first); /* Only increment decay value once. */
+							hist->update(*ti, first, false); /* Only increment decay value once. */
 							first = false;
 						}
 					}
 					// hist->remove_label(nl.lb[min_itr]);
-					hist->release_lock();
 					/* Update the vertex's label*/
 					nl.lb[min_itr] = new_label;
 					vertex.set_data(nl);
