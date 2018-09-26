@@ -40,7 +40,7 @@ Histogram::~Histogram(){
  *
  */
 void Histogram::update(unsigned long label, bool increment_t, bool base) {
-	this->get_lock();
+	this->histogram_map_lock.lock();
 	if (increment_t) /* We use this variable to make sure, when we do CHUNKIFY, we only update once*/
 		this->t++;
 	/* Decay first if needed. Decay only in streaming. */
@@ -87,7 +87,7 @@ void Histogram::update(unsigned long label, bool increment_t, bool base) {
 			}
 		}
 	}
-	this->release_lock();
+	this->histogram_map_lock.unlock();
 	return;
 }
 
@@ -100,7 +100,7 @@ void Histogram::update(unsigned long label, bool increment_t, bool base) {
  *
  */
 void Histogram::create_sketch() {
-	this->get_lock();
+	this->histogram_map_lock.lock();
 	/* Locally save some sketch parameters. */
 	std::map<unsigned long, struct hist_elem> base_map;
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
@@ -149,17 +149,17 @@ void Histogram::create_sketch() {
 		this->sketch[i] = s_i;
 		this->hash[i] = a_i;
 	}
-	this->release_lock();
+	this->histogram_map_lock.unlock();
 	return;
 }
 
-void Histogram::get_lock() {
-	this->histogram_map_lock.lock();
-}
+// void Histogram::get_lock() {
+// 	this->histogram_map_lock.lock();
+// }
 
-void Histogram::release_lock(){
-	this->histogram_map_lock.unlock();
-}
+// void Histogram::release_lock(){
+// 	this->histogram_map_lock.unlock();
+// }
 
 /*!
  * @brief Remove @label from the histogram_map.
@@ -184,12 +184,12 @@ void Histogram::release_lock(){
 // }
 
 void Histogram::record_sketch(FILE* fp) {
-	this->get_lock();
+	this->histogram_map_lock.lock();
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		fprintf(fp,"%lu ", this->sketch[i]);
 	}
 	fprintf(fp, "\n");
-	this->release_lock();
+	this->histogram_map_lock.unlock();
 	return;
 }
 

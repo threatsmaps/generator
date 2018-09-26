@@ -33,8 +33,8 @@ public:
 	~Histogram();
 	void update(unsigned long label, bool increment_t, bool base);
 	void create_sketch();
-	void get_lock();
-	void release_lock();
+	// void get_lock();
+	// void release_lock();
 	// void remove_label(unsigned long label);
 	void record_sketch(FILE* fp);
 	void print_histogram();
