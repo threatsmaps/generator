@@ -89,15 +89,28 @@ void Histogram::update(unsigned long label, bool base, std::map<unsigned long, s
 
 		struct hist_elem generated_param = this->construct_hist_elem(label);
 		for (int i = 0; i < SKETCH_SIZE; i++) {
-			if (generated_param.r[i] != histo_param.r[i]) {
-				std::cout << "r value (" << generated_param.r[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
+			double r = generated_param.r[i];
+			double beta = generated_param.beta[i];
+			double c = generated_param.c[i];
+			if (r != histo_param.r[i]) {
+				std::cout << "r value (" << r << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.r[i] << std::endl;
 			}
-			if (generated_param.beta[i] != histo_param.beta[i]) {
-				std::cout << "beta value (" << generated_param.beta[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
+			if (beta != histo_param.beta[i]) {
+				std::cout << "beta value (" << beta << ") should be the same for label: " << label << ". But it is not at location i: " << i << ", which is: " << histo_param.beta[i] << std::endl;
 			}
-			if (generated_param.c[i] != histo_param.c[i]) {
-				std::cout << "c value (" << generated_param.c[i] << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
+			if (c != histo_param.c[i]) {
+				std::cout << "c value (" << c << ") should be the same for label: " << label << ". But it is not at location i: " << i <<", which is: " << histo_param.c[i] <<  std::endl;
 			}
+			for (int i = 0; i < SKETCH_SIZE; i++) {
+			/* Compute the new hash value a. */
+			double y = pow(M_E, log((rst.first)->second) - r * beta);
+			double a = c / (y * pow(M_E, r));
+
+			if (a < this->hash[i]) {
+				this->hash[i] = a;
+				this->sketch[i] = (rst.first)->first;
+			}
+		}
 		}
 	}
 	this->histogram_map_lock.unlock();
