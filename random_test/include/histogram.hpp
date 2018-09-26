@@ -31,7 +31,8 @@ public:
 	static Histogram* get_instance();
 	~Histogram();
 	struct hist_elem construct_hist_elem(unsigned long label);
-	void update(unsigned long label, bool increment_t, bool base, std::map<unsigned long, struct hist_elem>& param_map);
+	void populate(unsigned long label);
+	void update(unsigned long label, std::map<unsigned long, struct hist_elem>& param_map);
 	void create_sketch(std::map<unsigned long, struct hist_elem>& param_map);
 	void record_sketch(FILE* fp);
 

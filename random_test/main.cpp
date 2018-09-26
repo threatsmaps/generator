@@ -1,6 +1,5 @@
 #include <iostream>
 #include <random>
-#include <pthread.h>
 
 #include "include/histogram.hpp"
 #include "include/helper.hpp"
@@ -15,6 +14,7 @@ float LAMBDA;
 unsigned long labels[10] = {17801, 17802, 17803, 17804, 17805, 391754189065, 56438927594, 58942375902, 5743829047, 74389274};
 std::map<unsigned long, struct hist_elem> param_map;
 
+/*
 void * stream_thread(void *threadid) {
 	long tid;
 	tid = (long)threadid;
@@ -26,12 +26,13 @@ void * stream_thread(void *threadid) {
 	}
 	pthread_exit(NULL);
 }
+*/
 
 int main()
 {
 	DECAY = 100;
 	LAMBDA = 0.02;
-	pthread_t threads[NUM_THREADS];
+	// pthread_t threads[NUM_THREADS];
 
 	Histogram* hist = Histogram::get_instance();
 /*		
@@ -75,18 +76,18 @@ int main()
 		}	
 	}
 */
-	
 	for (int i = 0; i < 10; i++) {
-		hist->update(labels[i], false, true, param_map);
+		hist->populate(labels[i]);
 	}
 
 	hist->create_sketch(param_map);
 
 	if (SINGLE) {
         	for (int i = 0; i < 10; i++) {
-                	hist->update(labels[i % 10], true, false, param_map);
+                	hist->update(labels[i], param_map);
         	}
 	}
+	/*
 	else {
 		for (int i = 0; i < NUM_THREADS; i++) {
 			std::cout << "main() : creating thread, " << i << std::endl;
@@ -101,6 +102,6 @@ int main()
 			pthread_join(threads[i], NULL);
 		}
 	}
-
+	*/
 	return 0;
 }
