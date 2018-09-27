@@ -30,21 +30,51 @@ Histogram::~Histogram(){
 }
 
 /*!
- * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value.
- * 
- * @increment_t: if CHUNKIFY, we only decay the value once.
- * @base: if true, we do not update hash. We only update hash during streaming.
- * 
- * We decay every element in the histogram every DECAY updates.
- * We lock the whole operation here.
+ * @brief Construct parameter values for a histogram label on the fly.
  *
  */
-void Histogram::update(unsigned long label, bool increment_t, bool base) {
+struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
+	struct hist_elem new_elem;
+	std::default_random_engine r_generator(label);
+	std::default_random_engine c_generator(label / 2);
+	std::default_random_engine beta_generator(label);
+	logstream(LOG_DEBUG) << "(new construction) c = ";
+	for (int i = 0; i < SKETCH_SIZE; i++) {
+		new_elem.r[i] = gamma_dist(r_generator);
+		new_elem.beta[i] = uniform_dist(beta_generator);
+		new_elem.c[i] = gamma_dist(c_generator);
+		logstream(LOG_DEBUG) << new_elem.c[i] << " ";
+	}
+	logstream(LOG_DEBUG) << std::endl;
+	gamma_dist.reset();
+	return new_elem;
+}
+
+/*!
+ * @brief To debug, we use this function to make sure generated values are the same as stored values. 
+ */
+void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b) {
+	for (int i = 0; i < SKETCH_SIZE; i++) {
+		if (a.r[i] != b.r[i]) {
+			logstream(LOG_ERROR) << "LABEL["<<label<<"] r: Got " << b.r[i] << ". Expected " << a.r[i] << " at " << i <<  std::endl;
+		}
+		if (a.beta[i] != b.beta[i]) {
+			logstream(LOG_ERROR) << "LABEL["<<label<<"] beta: Got " << b.beta[i] << ". Expected " << a.beta[i] << " at " << i <<  std::endl;
+		}
+		if (a.c[i] != b.c[i]) {
+			logstream(LOG_ERROR) << "LABEL["<<label<<"] c: Got " << b.c[i] << ". Expected " << a.c[i] << " at " << i <<  std::endl;
+		}
+	}
+}
+
+/*!
+ * @brief For decaying values in histogram map.
+ */
+void Histogram::decay() {
 	this->histogram_map_lock.lock();
-	if (increment_t) /* We use this variable to make sure, when we do CHUNKIFY, we only update once*/
-		this->t++;
-	/* Decay first if needed. Decay only in streaming. */
-	if (!base && this->t >= DECAY) {
+	this->t++;
+	/* Decay only when t == DECAY. */
+	if (this->t >= DECAY) {
 		std::map<unsigned long, double>::iterator it;
 		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 			it->second *= pow(M_E, -LAMBDA); /* M_E is defined in <cmath>. */
@@ -54,8 +84,22 @@ void Histogram::update(unsigned long label, bool increment_t, bool base) {
 		}
 		this->t = 0; /* Reset this timer. */
 	}
+	this->histogram_map_lock.unlock();
+}
 
-	/* Now we add the new element or update the existing element in the histogram map. 
+
+/*!
+ * @brief Insert @label to the histogram_map if it does not exist; otherwise, update the mapped "cnt" value.
+ * 
+ * @base: if true, we do not update hash. We only update hash during streaming.
+ * 
+ * We decay every element in the histogram every DECAY updates.
+ * We lock the whole operation here.
+ *
+ */
+void Histogram::update(unsigned long label, bool base) {
+	this->histogram_map_lock.lock();
+	/* We add the new element or update the existing element in the histogram map. 
 	 * This is done both in base and streaming part of the graph.
 	 */
 	std::pair<std::map<unsigned long, double>::iterator, bool> rst;
@@ -72,14 +116,14 @@ void Histogram::update(unsigned long label, bool increment_t, bool base) {
 	 * Hash updates only happen in streaming.
 	 */
 	if (!base) {
-		std::default_random_engine r_generator(label);
-		std::default_random_engine c_generator(label / 2);
-		std::default_random_engine beta_generator(label);
+		struct hist_elem generated_param = this->construct_hist_elem(label);
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			/* Compute the new hash value a. */
-			double r = gamma_dist(r_generator);
-			double y = pow(M_E, log((rst.first)->second) - r * uniform_dist(beta_generator));
-			double a = gamma_dist(c_generator) / (y * pow(M_E, r));
+			double r = generated_param.r[i];
+			double beta = generated_param.beta[i];
+			double c = generated_param.c[i];
+			double y = pow(M_E, log((rst.first)->second) - r * beta);
+			double a = c / (y * pow(M_E, r));
 
 			if (a < this->hash[i]) {
 				this->hash[i] = a;
@@ -105,15 +149,7 @@ void Histogram::create_sketch() {
 	std::map<unsigned long, struct hist_elem> base_map;
 	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
 		unsigned long label = it->first;
-		struct hist_elem new_elem;
-		std::default_random_engine r_generator(label);
-		std::default_random_engine c_generator(label / 2);
-		std::default_random_engine beta_generator(label);
-		for (int i = 0; i < SKETCH_SIZE; i++) {
-			new_elem.r[i] = gamma_dist(r_generator);
-			new_elem.beta[i] = uniform_dist(beta_generator);
-			new_elem.c[i] = gamma_dist(c_generator);
-		}
+		struct hist_elem new_elem = this->construct_hist_elem(label);
 		base_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
 	}
 

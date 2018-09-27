@@ -77,7 +77,7 @@ namespace graphchi {
 				vertex.set_data(nl);
 
 				/* Populate histogram map. */
-				hist->update(nl.lb[0], false, true);
+				hist->update(nl.lb[0], true);
 
 				/* Always schedule itself for the next iteration. 
 				 * We now always schedule every vertex to the next iteration, until a macro @next_itr says otherwise.
@@ -152,7 +152,7 @@ namespace graphchi {
 						logstream(LOG_DEBUG) << "The label string of the base vertex (with no neighbors) #" << vertex.id() << " is: " << last_itr_label << std::endl;
 #endif
 						/* Populate histogram map. */
-						hist->update(last_itr_label, false, true);
+						hist->update(last_itr_label, true);
 						/* Update the vertex's label vector. */
 						nl.lb[gcontext.iteration] = last_itr_label;
 						nl.tm[gcontext.iteration] = 0; /* All timestamps of the leaf vertex is set to be 0. */
@@ -203,11 +203,11 @@ namespace graphchi {
 					unsigned long new_label = hash((unsigned char *)new_label_str.c_str());
 					/* Populate histogram map, depending if we CHUNKIFY or not. */
 					if (!CHUNKIFY) {
-						hist->update(new_label, false, true);
+						hist->update(new_label, true);
 					} else {
 						std::vector<unsigned long> to_insert = chunkify((unsigned char *)new_label_str.c_str(), CHUNK_SIZE);
 						for (std::vector<unsigned long>::iterator ti = to_insert.begin(); ti != to_insert.end(); ++ti) {
-							hist->update(*ti, false, true);
+							hist->update(*ti, true);
 						}
 					}
 					/* Update the vertex's label*/
@@ -283,7 +283,8 @@ namespace graphchi {
 						vertex.set_data(nl);
 						/* Populate histogram map of all its labels. */
 						for (int i = 0; i < K_HOPS + 1; i++) {
-							hist->update(nl.lb[i], true, false);	
+							hist->decay();
+							hist->update(nl.lb[i], false);	
 						}
 						/* Populate the labels to all of its out-going edges. */
 						for (int i = 0; i < vertex.num_outedges(); i++) {
@@ -328,7 +329,8 @@ namespace graphchi {
 						}
 
 						/* Populate histogram map. */
-						hist->update(nl.lb[0], true, false);
+						hist->decay();
+						hist->update(nl.lb[0], false);
 					}
 				}
 				/* Now node is known to the system. */
@@ -449,12 +451,16 @@ namespace graphchi {
 					unsigned long new_label = hash((unsigned char *)new_label_str.c_str());
 					/* Populate histogram map. */
 					if (!CHUNKIFY) {
-						hist->update(new_label, true, false);
+						hist->decay();
+						hist->update(new_label, false);
 					} else {
 						std::vector<unsigned long> to_insert = chunkify((unsigned char *)new_label_str.c_str(), CHUNK_SIZE);
 						bool first = true;
 						for (std::vector<unsigned long>::iterator ti = to_insert.begin(); ti != to_insert.end(); ++ti) {
-							hist->update(*ti, first, false); /* Only increment decay value once. */
+							if (first) {
+								hist->decay(); /* Only increment decay value once. */
+							}
+							hist->update(*ti, false);
 							first = false;
 						}
 					}

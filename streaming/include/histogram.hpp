@@ -31,12 +31,15 @@ class Histogram {
 public:
 	static Histogram* get_instance();
 	~Histogram();
-	void update(unsigned long label, bool increment_t, bool base);
+	struct hist_elem construct_hist_elem(unsigned long label);
+	void decay();
+	void update(unsigned long label, bool base);
 	void create_sketch();
 	// void get_lock();
 	// void release_lock();
 	// void remove_label(unsigned long label);
 	void record_sketch(FILE* fp);
+	void comp(unsigned long label, struct hist_elem a, struct hist_elem b);
 	void print_histogram();
 
 private:
