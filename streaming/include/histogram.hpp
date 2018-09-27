@@ -57,6 +57,8 @@ private:
 
 	/* The lock needed for updating histogram map. */
 	std::mutex histogram_map_lock;
+	/* The lock needed for constructing new histogram parameters. */
+	std::mutex histo_param_lock;
 
 };
 #include "histogram.cpp"

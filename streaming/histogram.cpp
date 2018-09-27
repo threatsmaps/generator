@@ -34,6 +34,7 @@ Histogram::~Histogram(){
  *
  */
 struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
+	this->histo_param_lock.lock();
 	struct hist_elem new_elem;
 	std::default_random_engine r_generator(label);
 	std::default_random_engine c_generator(label / 2);
@@ -47,6 +48,7 @@ struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
 	}
 	logstream(LOG_DEBUG) << std::endl;
 	gamma_dist.reset();
+	this->histo_param_lock.unlock();
 	return new_elem;
 }
 
