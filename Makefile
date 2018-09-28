@@ -80,57 +80,57 @@ docs: */**
 	doxygen conf/doxygen/doxygen.config
 
 run_youtube_v2:
-	cd streaming/analyze && mkdir -p train-data-youtube-v2-small
+	cd streaming/analyze && mkdir -p train-data-streamspot-medium
 	number=0 ; while [ $$number -le 99 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/youtube_data_v2/base_train/base-youtube-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/youtube_data_v2/stream_train/stream-youtube-v2-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file streaming/analyze/train-data-youtube-v2-small/sketch-youtube-v2-$$number.txt chunkify 1 chunk_size 50 ; \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/youtube_data_v2/base_train/base-youtube-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/youtube_data_v2/stream_train/stream-youtube-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-streamspot-medium/sketch-youtube-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/youtube_data_v2/base_train/base-youtube-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/youtube_data_v2/base_train/base-youtube-v2-$$number.txt_* ; \
 		number=`expr $$number + 4` ; \
 	done
 
 run_gmail_v2:
-	cd streaming/analyze && mkdir -p train-data-gmail-v2
-	number=100 ; while [ $$number -le 199 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/gmail_data_v2/base_train/base-gmail-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/gmail_data_v2/stream_train/stream-gmail-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-gmail-v2/sketch-gmail-v2-$$number.txt chunkify 1 chunk_size 20 ; \
+	cd streaming/analyze && mkdir -p train-data-streamspot-medium
+	number=102 ; while [ $$number -le 199 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/gmail_data_v2/base_train/base-gmail-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/gmail_data_v2/stream_train/stream-gmail-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-streamspot-medium/sketch-gmail-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/gmail_data_v2/base_train/base-gmail-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/gmail_data_v2/base_train/base-gmail-v2-$$number.txt_* ; \
-		number=`expr $$number + 1` ; \
+		number=`expr $$number + 4` ; \
 	done
 
 run_vgame_v2:
-	cd streaming/analyze && mkdir -p train-data-vgame-v2
-	number=200 ; while [ $$number -le 299 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/vgame_data_v2/base_train/base-vgame-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/vgame_data_v2/stream_train/stream-vgame-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-vgame-v2/sketch-vgame-v2-$$number.txt chunkify 1 chunk_size 20 ; \
+	cd streaming/analyze && mkdir -p train-data-streamspot-medium
+	number=203 ; while [ $$number -le 299 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/vgame_data_v2/base_train/base-vgame-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/vgame_data_v2/stream_train/stream-vgame-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-streamspot-medium/sketch-vgame-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/vgame_data_v2/base_train/base-vgame-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/vgame_data_v2/base_train/base-vgame-v2-$$number.txt_* ; \
-		number=`expr $$number + 1` ; \
+		number=`expr $$number + 4` ; \
 	done
 	
 run_attack_v2:
-	cd streaming/analyze && mkdir -p test-data-attack-v2-small
-	number=300 ; while [ $$number -le 399 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/attack_data_v2/base_train/base-attack-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/attack_data_v2/stream_train/stream-attack-v2-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file streaming/analyze/test-data-attack-v2-small/sketch-attack-v2-$$number.txt chunkify 1 chunk_size 50 ; \
+	cd streaming/analyze && mkdir -p test-data-attack-v2-medium
+	number=304 ; while [ $$number -le 399 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/attack_data_v2/base_train/base-attack-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/attack_data_v2/stream_train/stream-attack-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/test-data-attack-v2-medium/sketch-attack-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/attack_data_v2/base_train/base-attack-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/attack_data_v2/base_train/base-attack-v2-$$number.txt_* ; \
-		number=`expr $$number + 16` ; \
+		number=`expr $$number + 4` ; \
 	done
 
 run_download_v2:
-	cd streaming/analyze && mkdir -p train-data-download-v2
-	number=400 ; while [ $$number -le 499 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/download_data_v2/base_train/base-download-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/download_data_v2/stream_train/stream-download-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-download-v2/sketch-download-v2-$$number.txt chunkify 1 chunk_size 20 ; \
+	cd streaming/analyze && mkdir -p train-data-streamspot-medium
+	number=405 ; while [ $$number -le 499 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/download_data_v2/base_train/base-download-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/download_data_v2/stream_train/stream-download-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-streamspot-medium/sketch-download-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/download_data_v2/base_train/base-download-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/download_data_v2/base_train/base-download-v2-$$number.txt_* ; \
-		number=`expr $$number + 1` ; \
+		number=`expr $$number + 4` ; \
 	done
 
 run_cnn_v2:
-	cd streaming/analyze && mkdir -p train-data-cnn-v2
-	number=500 ; while [ $$number -le 599 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/cnn_data_v2/base_train/base-cnn-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/cnn_data_v2/stream_train/stream-cnn-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-cnn-v2/sketch-cnn-v2-$$number.txt chunkify 1 chunk_size 20 ; \
+	cd streaming/analyze && mkdir -p train-data-streamspot-medium
+	number=506 ; while [ $$number -le 599 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/streamspot_data/cnn_data_v2/base_train/base-cnn-v2-$$number.txt niters 10000 stream_file streaming/data/streamspot_data/cnn_data_v2/stream_train/stream-cnn-v2-$$number.txt decay 100 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-data-streamspot-medium/sketch-cnn-v2-$$number.txt chunkify 1 chunk_size 20 ; \
 		rm -rf streaming/data/streamspot_data/cnn_data_v2/base_train/base-cnn-v2-$$number.txt.* ; \
 		rm -rf streaming/data/streamspot_data/cnn_data_v2/base_train/base-cnn-v2-$$number.txt_* ; \
-		number=`expr $$number + 1` ; \
+		number=`expr $$number + 4` ; \
 	done
 
 run_wget_train:
