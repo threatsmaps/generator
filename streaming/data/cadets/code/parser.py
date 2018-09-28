@@ -88,12 +88,12 @@ if __name__ == "__main__":
 		)
 		sys.exit(1)
 
-	files_to_parse = os.listdir(sys.argv[1])
+	files_to_parse = os.listdir(sys.argv[1] + '/db')
 	for input_file in files_to_parse:
 		if input_file == "dbinfo.csv" or input_file == "hydrate.sh" or input_file == "types.csv":
 			pass
 		else:
-			with open(os.path.join(sys.argv[1], input_file), 'r') as f:
+			with open(os.path.join(sys.argv[1] + '/db', input_file), 'r') as f:
 				parse_single_file(f)
 
 	write_edgelist_file(sys.argv[2])

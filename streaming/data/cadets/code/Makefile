@@ -15,7 +15,7 @@ benign1:
 	$(call truncate_data,3079651,3592925,3592926,benign1,7)
 	$(call truncate_data,3592926,4106200,4106201,benign1,8)
 	$(call truncate_data,4106201,4619475,4619476,benign1,9)
-	$(call truncate_data,4619476,5132758,513279,benign1,10)
+	$(call truncate_data,4619476,5132758,5132758,benign1,10)
 	
 parse1:
 	python parser.py output_benign1_1 edgelist1_1.txt
