@@ -206,6 +206,7 @@ def test(test_files, test_dir_name, models, index):
 	# Validation/Testing code starts here.
 	total_graphs = 0.0
 	predict_correct = 0.0
+	printout = ""
 	for input_test_file in test_files:
 		with open(os.path.join(test_dir_name, input_test_file), 'r') as f:
 			sketches = []	# The sketch on row i is the ith stage of the changing graph.
@@ -257,15 +258,15 @@ def test(test_files, test_dir_name, models, index):
 		f.close()
 		total_graphs = total_graphs + 1
 		if not abnormal:	# We have decided that the graph is not abnormal
-			print "This graph: " + input_test_file + " is considered NORMAL (" + str(num_fitted_model) + "/" + str(len(models)) + ")."
+			printout += "This graph: " + input_test_file + " is considered NORMAL (" + str(num_fitted_model) + "/" + str(len(models)) + ").\n"
 			if "attack" not in input_test_file:
 				predict_correct = predict_correct + 1
 		else:
-			print "This graph: " + input_test_file + " is considered ABNORMAL."
+			printout += "This graph: " + input_test_file + " is considered ABNORMAL.\n"
 			if "attack" in input_test_file:
 				predict_correct = predict_correct + 1
 	accuracy = predict_correct / total_graphs
-	return accuracy
+	return accuracy, printout
 
 
 
@@ -309,22 +310,45 @@ if __name__ == "__main__":
 
 	num_stds = args['num_stds']
 	if num_stds is None:	# If this argument is not supplied by the user, we try all possible configurations.
-		num_stds_config = [1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0]
+		num_stds_config = [1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
 	else:
 		num_stds_config = [num_stds]
 
 	# Modeling (training)
 	models = model(train_files, train_dir_name, NUM_TRIALS, threshold_metric_config, num_stds_config)
 
+	print "We will attempt multiple cluster threshold configurations for the best results."
+	print "Trying: mean/max distances with 1.0, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0 standard deviation(s)..."
+	print "Best Configuration: "
+        best_accuracy = 0.0
+        final_printout = ""
+        best_metric = None
+        best_std = 0.0
 	for tm_num, tm in enumerate(threshold_metric_config):
 		for ns_num, ns in enumerate(num_stds_config):
 			# Validation/Testing
 			index = tm_num * len(num_stds_config) + ns_num
-			test_accuracy = test(test_files, test_dir_name, models, index)
-			print "Configuration: "
-			print "Threshold metric: " + tm
-			print "Number of standard deviations: " + str(ns)
-			print "Test accuracy: " + str(test_accuracy) + '\n'
+			test_accuracy, printout = test(test_files, test_dir_name, models, index)
+			if test_accuracy > best_accuracy:
+				best_accuracy = test_accuracy
+				final_printout = printout
+				best_metric = tm
+				best_std = ns
+			elif test_accuracy == best_accuracy:
+				if best_metric == 'max' and tm == 'mean':	# same accuracy, prefer mean than max
+					best_metric = tm
+					best_std = ns
+					final_printout = printout
+				elif best_metric == tm:				# same accuracy and same metric, prefer lower number of std
+					if ns < best_std:
+						best_std = ns
+						final_printout = printout
+
+	print "Threshold metric: " + best_metric
+	print "Number of standard deviations: " + str(best_std)
+	print "Test accuracy: " + str(best_accuracy)
+	print "Results: "
+	print final_printout
 
 
 
