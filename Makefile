@@ -133,24 +133,6 @@ run_cnn_v2:
 		number=`expr $$number + 1` ; \
 	done
 
-run_wget_train:
-	cd streaming/analyze && mkdir -p train-data-wget
-	number=0 ; while [ $$number -le 99 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/wget_data/train/base-wget-$$number.txt niters 10000 stream_file streaming/data/wget_data/train/stream-wget-$$number.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/train-data-wget/sketch-wget-$$number.txt chunkify 1 chunk_size 5 ; \
-		rm -rf streaming/data/wget_data/train/base-wget-$$number.txt.* ; \
-		rm -rf streaming/data/wget_data/train/base-wget-$$number.txt_* ; \
-		number=`expr $$number + 1` ; \
-	done
-
-run_wget_test:
-	cd streaming/analyze && mkdir -p test-data-wget
-	bin/streaming/main filetype edgelist file streaming/data/wget_data/test/base-wget-test.txt niters 10000 stream_file streaming/data/wget_data/test/stream-wget-test.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/test-data-wget/sketch-wget-test.txt chunkify 1 chunk_size 5
-	rm -rf streaming/data/wget_data/test/base-wget-test.txt.*
-	rm -rf streaming/data/wget_data/test/base-wget-test.txt_*
-	bin/streaming/main filetype edgelist file streaming/data/wget_data/test/base-wget-attack.txt niters 10000 stream_file streaming/data/wget_data/test/stream-wget-attack.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/test-data-wget/sketch-wget-attack.txt chunkify 1 chunk_size 5
-	rm -rf streaming/data/wget_data/test/base-wget-attack.txt.*
-	rm -rf streaming/data/wget_data/test/base-wget-attack.txt_*
-
 run_ruby_train:
 	cd streaming/analyze && mkdir -p train-data-ruby
 	number=0 ; while [ $$number -le 8 ] ; do \
@@ -167,20 +149,20 @@ run_ruby_test:
 	rm -rf streaming/data/ruby_data/base-ruby-attack.txt_*
 
 run_wget_train_multilabel:
-	cd streaming/analyze && mkdir -p train-data-wget-multilabel
+	cd streaming/analyze && mkdir -p train-data-wget-multilabel-small
 	number=0 ; while [ $$number -le 99 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/multilabel/wget_data_multilabel/train/base-wget-$$number.txt niters 10000 stream_file streaming/data/multilabel/wget_data_multilabel/train/stream-wget-$$number.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/train-data-wget-multilabel/sketch-wget-$$number.txt chunkify 1 chunk_size 5 ; \
-		rm -rf streaming/data/multilabel/wget_data_multilabel/train/base-wget-$$number.txt.* ; \
-		rm -rf streaming/data/multilabel/wget_data_multilabel/train/base-wget-$$number.txt_* ; \
+		bin/streaming/main filetype edgelist file streaming/data/multilabel/wget_data_multilabel/base_train/base-wget-$$number.txt niters 10000 stream_file streaming/data/multilabel/wget_data_multilabel/stream_train/stream-wget-$$number.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/train-data-wget-multilabel-small/sketch-wget-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf streaming/data/multilabel/wget_data_multilabel/base_train/base-wget-$$number.txt.* ; \
+		rm -rf streaming/data/multilabel/wget_data_multilabel/base_train/base-wget-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 
 run_wget_test_multilabel:
-	cd streaming/analyze && mkdir -p test-data-wget-multilabel
+	cd streaming/analyze && mkdir -p test-data-wget-multilabel-small
 	number=0 ; while [ $$number -le 1 ] ; do \
-		bin/streaming/main filetype edgelist file streaming/data/multilabel/wget_data_multilabel/test/base-wget-attack-$$number.txt niters 10000 stream_file streaming/data/multilabel/wget_data_multilabel/test/stream-wget-attack-$$number.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/test-data-wget-multilabel/sketch-wget-attack-$$number.txt chunkify 1 chunk_size 5 ; \
-		rm -rf streaming/data/multilabel/wget_data_multilabel/test/base-wget-attack-$$number.txt.* ; \
-		rm -rf streaming/data/multilabel/wget_data_multilabel/test/base-wget-attack-$$number.txt_* ; \
+		bin/streaming/main filetype edgelist file streaming/data/multilabel/wget_data_multilabel/base_test/base-wget-attack-$$number.txt niters 10000 stream_file streaming/data/multilabel/wget_data_multilabel/stream_test/stream-wget-attack-$$number.txt decay 100 lambda 0.02 interval 200 sketch_file streaming/analyze/test-data-wget-multilabel-small/sketch-wget-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf streaming/data/multilabel/wget_data_multilabel/base_test/base-wget-attack-$$number.txt.* ; \
+		rm -rf streaming/data/multilabel/wget_data_multilabel/base_test/base-wget-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 
