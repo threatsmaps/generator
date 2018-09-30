@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=1000 -DK_HOPS=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=3000 -DK_HOPS=3 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -78,6 +78,30 @@ ta:
 
 docs: */**
 	doxygen conf/doxygen/doxygen.config
+
+run_cadets_train:
+	cd streaming/analyze && mkdir -p train-cadets
+	number=1 ; while [ $$number -le 10 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign1-$$number.txt niters 1000000 stream_file streaming/data/cadets/code/cadet_data_train/stream_train/stream-cadets-benign1-$$number.txt decay 200 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-cadets/sketch-cadets-benign1-$$number.txt chunkify 1 chunk_size 20 ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign1-$$number.txt.* ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign1-$$number.txt_* ; \
+		bin/streaming/main filetype edgelist file streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign2-$$number.txt niters 1000000 stream_file streaming/data/cadets/code/cadet_data_train/stream_train/stream-cadets-benign2-$$number.txt decay 200 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-cadets/sketch-cadets-benign2-$$number.txt chunkify 1 chunk_size 20 ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign2-$$number.txt.* ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign2-$$number.txt_* ; \
+		bin/streaming/main filetype edgelist file streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign3-$$number.txt niters 1000000 stream_file streaming/data/cadets/code/cadet_data_train/stream_train/stream-cadets-benign3-$$number.txt decay 200 lambda 0.02 interval 1500 sketch_file streaming/analyze/train-cadets/sketch-cadets-benign3-$$number.txt chunkify 1 chunk_size 20 ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign3-$$number.txt.* ; \
+		rm -rf streaming/data/cadets/code/cadet_data_train/base_train/base-cadets-benign3-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+
+run_cadets_test:
+	cd streaming/analyze && mkdir -p test-cadets
+	number=1 ; while [ $$number -le 10 ] ; do \
+		bin/streaming/main filetype edgelist file streaming/data/cadets/code/cadet_data_test/base_test/base-cadets-pandex-attack-$$number.txt niters 1000000 stream_file streaming/data/cadets/code/cadet_data_test/stream_test/stream-cadets-pandex-attack-$$number.txt decay 200 lambda 0.02 interval 1500 sketch_file streaming/analyze/test-cadets/sketch-cadets-pandex-attack-$$number.txt chunkify 1 chunk_size 20 ; \
+		rm -rf streaming/data/cadets/code/cadet_data_test/base_test/base-cadets-pandex-attack-$$number.txt.* ; \
+		rm -rf streaming/data/cadets/code/cadet_data_test/base_test/base-cadets-pandex-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
 
 run_youtube_v2:
 	cd streaming/analyze && mkdir -p train-data-youtube-v2
