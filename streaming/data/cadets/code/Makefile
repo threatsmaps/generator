@@ -77,6 +77,16 @@ parse3:
 	python parser.py output_benign3_9 edgelist3_9.txt
 	python parser.py output_benign3_10 edgelist3_10.txt
 
+train_data:
+	mkdir -p cadet_data_train
+	cd cadet_data_train && mkdir -p base_train && mkdir -p stream_train
+	number=1 ; while [ $$number -le 10 ] ; do \
+		python post-process.py ../data/edgelist1_$$number.txt cadet_data_train/base_train/base-cadets-benign1-$$number.txt cadet_data_train/stream_train/stream-cadets-benign1-$$number.txt ; \
+		python post-process.py ../data/edgelist2_$$number.txt cadet_data_train/base_train/base-cadets-benign2-$$number.txt cadet_data_train/stream_train/stream-cadets-benign2-$$number.txt ; \
+		python post-process.py ../data/edgelist3_$$number.txt cadet_data_train/base_train/base-cadets-benign3-$$number.txt cadet_data_train/stream_train/stream-cadets-benign3-$$number.txt ; \
+		number=`expr $$number + 1` ; \
+	done
+
 pandex:
 	$(call truncate_data,1,1093940,1093941,pandex,1)
 	$(call truncate_data,1093941,2187880,2187881,pandex,2)
@@ -100,3 +110,11 @@ parsep:
 	python parser.py output_pandex_8 edgelistp_8.txt
 	python parser.py output_pandex_9 edgelistp_9.txt
 	python parser.py output_pandex_10 edgelistp_10.txt
+
+test_data:
+	mkdir -p cadet_data_test
+	cd cadet_data_test && mkdir -p base_test && mkdir -p stream_test
+	number=1 ; while [ $$number -le 10 ] ; do \
+		python post-process.py ../data/edgelistp_$$number.txt cadet_data_test/base_test/base-cadets-pandex-attack-$$number.txt cadet_data_test/stream_test/stream-cadets-pandex-attack-$$number.txt ; \
+		number=`expr $$number + 1` ; \
+	done
