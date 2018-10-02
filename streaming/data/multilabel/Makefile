@@ -52,3 +52,22 @@ background:
 		rm whole-system-preprocess-$$number.txt ; \
 		number=`expr $$number + 1` ; \
 	done
+
+background_small:
+	mkdir -p background_small
+	cd background_small && mkdir -p base_train && mkdir -p stream_train
+	number=0 ; while [ $$number -le 9 ] ; do \
+		python preprocess-w3c.py ../../../../prov-ips/streamspot/experiment/openssl/data/whole-system-$$number.log whole-system-preprocess-$$number.txt ; \
+		python parse-w3c.py whole-system-preprocess-$$number.txt background_small/base_train/base-background-$$number.txt background_small/stream_train/stream-background-$$number.txt ; \
+		rm error.log ; \
+		rm whole-system-preprocess-$$number.txt ; \
+		number=`expr $$number + 1` ; \
+	done
+
+background_small_test:
+	mkdir -p background_small
+	cd background_small && mkdir -p base_test && mkdir -p stream_test
+	python preprocess-w3c.py ../../../../prov-ips/streamspot/experiment/openssl/data/whole-system-attack.log whole-system-preprocess-$$number.txt ; \
+	python parse-w3c.py whole-system-preprocess-$$number.txt background_small/base_test/base-background-attack.txt background_small/stream_test/stream-background-attack.txt ; \
+	rm error.log ; \
+	rm whole-system-preprocess-$$number.txt ; \
