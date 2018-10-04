@@ -205,9 +205,9 @@ void * dynamic_graph_reader(void * info) {
 		}
 		/* Add the new edge to the graph. */
 		bool success = false;
-		/* Allow to add only when time is larger than or equal to time_elasped. (For runtime performance eval.) */
+		/* Allow to add only when time is larger than or equal to time_elapsed. (For runtime performance eval.) */
 		tc = std::time(nullptr);
-		while ((double)(tc - t0) < time_elasped) {
+		while ((double)(tc - t0) < time_elapsed) {
 			quicksleep();
 		}
 		while (!success) {
