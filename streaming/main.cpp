@@ -268,7 +268,7 @@ int main(int argc, const char ** argv) {
 	/* Metrics object for keeping track of performance counters and other information. 
 	 * Currently required. */
 	metrics m("Streaming Extractor");
-	global_logger().set_log_level(LOG_INFO);
+	global_logger().set_log_level(LOG_NONE);
 
 	/* Parameters from command line. */
 	std::string filename = get_option_string("file");
