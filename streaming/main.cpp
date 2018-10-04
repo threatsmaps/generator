@@ -51,12 +51,14 @@ int CHUNK_SIZE;
 // bool next_itr = false;
 
 /* A wrapper function for nanosleep. For runtime performance eval. */
+/*
 void quicksleep() {
 	struct timespec req = {0};
 	req.tv_sec = 0;
 	req.tv_nsec = 0;
 	nanosleep(&req, (struct timespec *)NULL);
 }
+*/
 
 /*!
  * @brief A separate thread execute this function to stream graph from a file.
@@ -208,7 +210,8 @@ void * dynamic_graph_reader(void * info) {
 		/* Allow to add only when time is larger than or equal to time_elapsed. (For runtime performance eval.) */
 		tc = std::time(nullptr);
 		while ((double)(tc - t0) < time_elapsed) {
-			quicksleep();
+			tc = std::time(nullptr);
+			// quicksleep();
 		}
 		while (!success) {
 			success = dyngraph_engine->add_edge(from, to, el);
