@@ -12,6 +12,9 @@
  */
 
 #include <fstream>
+/* For runtime performance eval. */
+#include <ctime>
+#include <time.h>
 
 #include "include/def.hpp"
 #include "include/helper.hpp"
@@ -47,6 +50,14 @@ int CHUNK_SIZE;
 /* The following varible is global. */
 // bool next_itr = false;
 
+/* A wrapper function for nanosleep. For runtime performance eval. */
+void quicksleep() {
+	struct timespec req = {0};
+	req.tv_sec = 0;
+	req.tv_nsec = 0;
+	nanosleep(&req, (struct timespec *)NULL);
+}
+
 /*!
  * @brief A separate thread execute this function to stream graph from a file.
  */
@@ -59,6 +70,14 @@ void * dynamic_graph_reader(void * info) {
 	FILE * fp = fopen(sketch_file.c_str(), "a+");
 	if (fp == NULL) {
 		logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
+		assert(false);
+		return NULL;
+	}
+
+	/* Open the stats.txt file to write our runtime statistics. */
+	FILE * fs = fopen("stats.txt", "a+");
+	if (fs == NULL) {
+		logstream(LOG_ERROR) << "Cannot open the stats file to write: stats.txt. " << " Error code: " << strerror(errno) << std::endl;
 		assert(false);
 		return NULL;
 	}
@@ -82,11 +101,16 @@ void * dynamic_graph_reader(void * info) {
 	}
 	assert(f != NULL);
 
+	/* Start timestamp. */
+	std::time_t t0 = std::time(nullptr);
+
 	/* Reading the file. */
 	vid_t from;
 	vid_t to;
 	EdgeDataType el;
 	char s[1024];
+	double time_elapsed; // For runtime performance eval.
+	std::time_t tc; // For runtime performance eval.
 	int cnt = 0;
 
 	while(fgets(s, 1024, f) != NULL) {
@@ -161,6 +185,13 @@ void * dynamic_graph_reader(void * info) {
 		assert (k != NULL);
 		el.tme[0] = atoi(k);
 
+		/* Time info for performance eval.*/
+		k = strtok(NULL, delims);
+		if (k == NULL)
+			logstream(LOG_ERROR) << "Performance info does not exist." << std::endl;
+		assert (k != NULL);
+		time_elapsed = atof(k);
+
 #ifdef DEBUG
 		k = strtok(NULL, delims);
 		if (k != NULL)
@@ -174,6 +205,11 @@ void * dynamic_graph_reader(void * info) {
 		}
 		/* Add the new edge to the graph. */
 		bool success = false;
+		/* Allow to add only when time is larger than or equal to time_elasped. (For runtime performance eval.) */
+		tc = std::time(nullptr);
+		while ((double)(tc - t0) < time_elasped) {
+			quicksleep();
+		}
 		while (!success) {
 			success = dyngraph_engine->add_edge(from, to, el);
 		}
@@ -193,6 +229,10 @@ void * dynamic_graph_reader(void * info) {
 			logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
 			hist->record_sketch(fp);
 			pthread_barrier_wait(&std::graph_barrier);
+			/* Record time again for runtime performance eval. */
+			tc = std::time(nullptr);
+			fprintf(fs,"%f\n", (float)(tc-t0));
+
 		}
 	}
 	std::stop = 1;
@@ -204,9 +244,11 @@ void * dynamic_graph_reader(void * info) {
 	if (ferror(fp) != 0 || fclose(fp) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
 	}
+	if (ferror(fs) != 0 || fclose(fs) != 0) {
+		logstream(LOG_ERROR) << "Unable to close the stats file: stats.txt. Error code: " << strerror(errno) << std::endl;
+	}
 	/* After the file is closed, the engine will stop 1000 iterations after the current iteration in which the addition is finished. */
 	// dyngraph_engine->finish_after_iters(1000);
-
 	return NULL;
 }
 
