@@ -282,6 +282,8 @@ run_wget:
 		bin/streaming/main filetype edgelist file ../../data/benign/base/base-wget-$$number.txt niters 10000 stream_file ../../data/benign/stream/stream-wget-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/train_wget/sketch-wget-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/benign/base/base-wget-$$number.txt.* ; \
 		rm -rf ../../data/benign/base/base-wget-$$number.txt_* ; \
+		python streaming/stats.py streaming/stats.txt ../../output/perf-wget-$$number.txt 500 ; \
+		rm streaming/stats.txt ; \
 		number=`expr $$number + 1` ; \
 	done
 
@@ -291,6 +293,8 @@ run_wget_baseline_attack:
 		bin/streaming/main filetype edgelist file ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt niters 10000 stream_file ../../data/attack_baseline/stream/stream-wget-attack-baseline-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/test_wget_baseline/sketch-wget-attack-baseline-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt.* ; \
 		rm -rf ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt_* ; \
+		python streaming/stats.py streaming/stats.txt ../../output/perf-wget-attack-baseline-$$number.txt 500 ; \
+		rm streaming/stats.txt ; \
 		number=`expr $$number + 1` ; \
 	done
 	cp ../../data/train_wget/sketch-wget-6.txt ../../data/test_wget_baseline
@@ -310,6 +314,8 @@ run_wget_interval_attack:
 		bin/streaming/main filetype edgelist file ../../data/attack_interval/base/base-wget-attack-interval-$$number.txt niters 10000 stream_file ../../data/attack_interval/stream/stream-wget-attack-interval-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/test_wget_interval/sketch-wget-attack-interval-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/attack_interval/base/base-wget-attack-interval-$$number.txt.* ; \
 		rm -rf ../../data/attack_interval/base/base-wget-attack-interval-$$number.txt_* ; \
+		python streaming/stats.py streaming/stats.txt ../../output/perf-wget-attack-interval-$$number.txt 500 ; \
+		rm streaming/stats.txt ; \
 		number=`expr $$number + 1` ; \
 	done
 	mv ../../data/train_wget/sketch-wget-6.txt ../../data/test_wget_interval
@@ -322,3 +328,23 @@ run_wget_interval_attack:
 	mv ../../data/train_wget/sketch-wget-86.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-92.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-103.txt ../../data/test_wget_interval
+
+number=0
+
+run_single_benign_wget:
+	cd ../../data && mkdir -p single_benign_wget
+	bin/streaming/main filetype edgelist file ../../data/benign/base/base-wget-$(number).txt niters 10000 stream_file ../../data/benign/stream/stream-wget-$(number).txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/single_benign_wget/sketch-wget-$(number).txt chunkify 1 chunk_size 5
+	rm -rf ../../data/benign/base/base-wget-$(number).txt.*
+	rm -rf ../../data/benign/base/base-wget-$(number).txt_*
+	python streaming/stats.py streaming/stats.txt ../../output/perf-wget-$(number).txt 500
+	rm streaming/stats.txt
+
+attack-type=baseline
+
+run_single_attack_wget:
+	cd ../../data && mkdir -p single_attack_wget
+	bin/streaming/main filetype edgelist file ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt niters 10000 stream_file ../../data/attack_$(attack-type)/stream/stream-wget-attack-$(attack-type)-$(number).txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/single_attack_wget/sketch-wget-attack-$(attack-type)-$(number).txt chunkify 1 chunk_size 5
+	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt.*
+	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt_*
+	python streaming/stats.py streaming/stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number).txt 500
+	rm streaming/stats.txt
