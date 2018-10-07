@@ -239,7 +239,10 @@ void * dynamic_graph_reader(void * info) {
 		}
 	}
 	std::stop = 1;
-	pthread_barrier_wait(&std::graph_barrier);
+	if (cnt != 0) {
+		/* Only need to wait if there is something there. */
+		pthread_barrier_wait(&std::graph_barrier);
+	}
 	if (ferror(f) != 0 || fclose(f) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the stream file: " << stream_file << ". Error code: " << strerror(errno) << std::endl;
 		return NULL;
