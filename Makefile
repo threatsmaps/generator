@@ -346,5 +346,5 @@ run_single_attack_wget:
 	bin/streaming/main filetype edgelist file ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt niters 10000 stream_file ../../data/attack_$(attack-type)/stream/stream-wget-attack-$(attack-type)-$(number).txt decay 200 lambda 0.02 interval 1000 sketch_file ../../data/single_attack_wget/sketch-wget-attack-$(attack-type)-$(number).txt chunkify 1 chunk_size 20
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt.*
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt_*
-	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-window-1000.txt 1000
+	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-window-1500-2.txt 1500
 	rm stats.txt
