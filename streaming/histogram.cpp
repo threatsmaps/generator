@@ -88,7 +88,10 @@ void Histogram::decay(FILE* fp) {
 		this->t = 0; /* Reset this timer. */
 	}
 	if (this->w >= DECAY) {
-		this->record_sketch(fp);
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			fprintf(fp,"%lu ", this->sketch[i]);
+		}
+		fprintf(fp, "\n");
 		this->w = 0; /* Reset this timer. */
 	}
 	this->histogram_map_lock.unlock();
