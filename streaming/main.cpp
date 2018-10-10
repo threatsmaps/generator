@@ -186,13 +186,16 @@ void * dynamic_graph_reader(void * info) {
 #ifdef DEBUG
 		logstream(LOG_DEBUG) << "Schedule a new edge with possibly new nodes: " << from << " -> " << to << std::endl;
 #endif
-		if (cnt == INTERVAL) {
-			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
-			cnt = 0;
-			/* We first record the sketch from the updated graph. */
+		if (cnt % DECAY == 0) {
+			/* We record the sketch from the updated graph every decay. */
 			logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
 			hist->record_sketch(fp);
-			pthread_barrier_wait(&std::graph_barrier);
+
+			if (cnt == INTERVAL) {
+				/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
+				cnt = 0;
+				pthread_barrier_wait(&std::graph_barrier);
+			}
 		}
 	}
 	std::stop = 1;
