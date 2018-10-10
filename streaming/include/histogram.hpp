@@ -32,7 +32,7 @@ public:
 	static Histogram* get_instance();
 	~Histogram();
 	struct hist_elem construct_hist_elem(unsigned long label);
-	void decay();
+	void decay(FILE* fp);
 	void update(unsigned long label, bool base);
 	void create_sketch();
 	// void get_lock();
@@ -47,6 +47,7 @@ private:
 
 	Histogram() {
 		this->t = 0;
+		this->w = 0;
 	}
 
 	std::map<unsigned long, double> histogram_map; /* We use unicorn.db for hash values. histogram_map only maps label to counter. */
@@ -54,6 +55,7 @@ private:
 	double hash[SKETCH_SIZE];
 
 	int t; /* If t reaches decay, we decay the cnt and hash value by e^(-lambda).*/
+	int w; /* If w reaches window, we record the sketch. */
 
 	/* The lock needed for updating histogram map. */
 	std::mutex histogram_map_lock;

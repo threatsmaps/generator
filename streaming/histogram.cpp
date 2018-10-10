@@ -70,11 +70,12 @@ void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b
 }
 
 /*!
- * @brief For decaying values in histogram map.
+ * @brief For decaying values in histogram map. And record the sketch at the file @fp.
  */
-void Histogram::decay() {
+void Histogram::decay(FILE* fp) {
 	this->histogram_map_lock.lock();
 	this->t++;
+	this->w++;
 	/* Decay only when t == DECAY. */
 	if (this->t >= DECAY) {
 		std::map<unsigned long, double>::iterator it;
@@ -85,6 +86,10 @@ void Histogram::decay() {
 			this->hash[i] *= pow(M_E, -LAMBDA);
 		}
 		this->t = 0; /* Reset this timer. */
+	}
+	if (this->w >= DECAY) {
+		this->record_sketch(fp);
+		this->w = 0; /* Reset this timer. */
 	}
 	this->histogram_map_lock.unlock();
 }

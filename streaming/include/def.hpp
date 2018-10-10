@@ -35,6 +35,8 @@ extern int INTERVAL;
 /* Determine if we want to chunk the string, and how big each chunk is. CHUNK_SIZE > 1 */
 extern bool CHUNKIFY;
 extern int CHUNK_SIZE;
+/* Sketch file to write the sketch. */
+extern FILE * sfp;
 
 // extern bool next_itr; /* We do not need any more iterations if next_itr is false. GraphChi should stop. */
 

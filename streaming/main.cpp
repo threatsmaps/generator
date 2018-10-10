@@ -33,6 +33,7 @@ using namespace graphchi;
 graphchi_dynamicgraph_engine<VertexDataType, EdgeDataType> * dyngraph_engine;
 std::string stream_file;
 std::string sketch_file;
+FILE * sfp;
 
 pthread_barrier_t std::graph_barrier;
 pthread_barrier_t std::stream_barrier;
@@ -68,13 +69,13 @@ void * dynamic_graph_reader(void * info) {
 	// usleep(100000); /* We do not need to sleep to wait. We have a while loop to do so. */
 	logstream(LOG_DEBUG) << "Streaming begins from file: " << stream_file << std::endl;
 
-	/* Open the MODEL_FILE to write our sketches. */
-	FILE * fp = fopen(sketch_file.c_str(), "a+");
-	if (fp == NULL) {
-		logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-		assert(false);
-		return NULL;
-	}
+	// /* Open the sketch file to write our sketches. */
+	// FILE * fp = fopen(sketch_file.c_str(), "a+");
+	// if (fp == NULL) {
+	// 	logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
+	// 	assert(false);
+	// 	return NULL;
+	// }
 
 	/* Open the stats.txt file to write our runtime statistics. */
 	FILE * fs = fopen("stats.txt", "a+");
@@ -229,8 +230,8 @@ void * dynamic_graph_reader(void * info) {
 			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
 			cnt = 0;
 			/* We first record the sketch from the updated graph. */
-			logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
-			hist->record_sketch(fp);
+			// logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
+			// hist->record_sketch(fp);
 			pthread_barrier_wait(&std::graph_barrier);
 			/* Record time again for runtime performance eval. */
 			tc = std::time(nullptr);
@@ -247,9 +248,9 @@ void * dynamic_graph_reader(void * info) {
 		logstream(LOG_ERROR) << "Unable to close the stream file: " << stream_file << ". Error code: " << strerror(errno) << std::endl;
 		return NULL;
 	}
-	if (ferror(fp) != 0 || fclose(fp) != 0) {
-		logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-	}
+	// if (ferror(fp) != 0 || fclose(fp) != 0) {
+	// 	logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
+	// }
 	if (ferror(fs) != 0 || fclose(fs) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the stats file: stats.txt. Error code: " << strerror(errno) << std::endl;
 	}
@@ -290,6 +291,13 @@ int main(int argc, const char ** argv) {
 	if (!to_chunk)
 		CHUNKIFY = false;
 	CHUNK_SIZE = get_option_int("chunk_size", 5);
+
+	/* Open the sketch file to write. */
+	sfp = fopen(sketch_file.c_str(), "a");
+	if (sfp == NULL) {
+		logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
+	}
+	assert(sfp != NULL);
 	
 	/* Process input file - if not already preprocessed */
 	int nshards = convert_if_notexists<EdgeDataType>(filename, get_option_string("nshards", "auto"));
@@ -313,20 +321,20 @@ int main(int argc, const char ** argv) {
 
 	/* Once the streaming graph is all done, we will record the last sketch that sketches the complete graph. */
 	/* We append the last sketch to the @sketch_file. */
-	FILE * fp = fopen(sketch_file.c_str(), "a");
-	if (fp == NULL) {
-		logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-	}
-	assert(fp != NULL);
+	// FILE * fp = fopen(sketch_file.c_str(), "a");
+	// if (fp == NULL) {
+	// 	logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
+	// }
+	// assert(fp != NULL);
 	Histogram* hist = Histogram::get_instance();
 
 	logstream(LOG_DEBUG) << "Recording the final complete graph sketch... " << std::endl;
-	if (fp == NULL) {
+	if (sfp == NULL) {
 		logstream(LOG_ERROR) << "Sketch file no longer exists... " << std::endl;
 	}
-	hist->record_sketch(fp);
+	hist->record_sketch(sfp);
 
-	if (ferror(fp) != 0 || fclose(fp) != 0) {
+	if (ferror(sfp) != 0 || fclose(sfp) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file <<  std::endl;
 		return -1;
 	}
