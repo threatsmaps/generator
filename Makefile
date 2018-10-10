@@ -329,7 +329,7 @@ run_wget_interval_attack:
 	mv ../../data/train_wget/sketch-wget-92.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-103.txt ../../data/test_wget_interval
 
-number=4
+number=0
 
 run_single_benign_wget:
 	cd ../../data && mkdir -p single_benign_wget
