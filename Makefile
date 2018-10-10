@@ -82,14 +82,14 @@ docs: */**
 run_toy:
 	cd ../../data && mkdir -p train_toy
 	number=0 ; while [ $$number -le 99 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/toy_data/base_train/base-toy-$$number.txt niters 10000 stream_file ../../data/toy_data/stream_train/stream-toy-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/train_toy/sketch-toy-$$number.txt chunkify 1 chunk_size 50 ; \
+		bin/streaming/main filetype edgelist file ../../data/toy_data/base_train/base-toy-$$number.txt niters 10000 stream_file ../../data/toy_data/stream_train/stream-toy-$$number.txt decay 500 lambda 0.02 interval 2000 sketch_file ../../data/train_toy/sketch-toy-$$number.txt chunkify 1 chunk_size 50 ; \
 		rm -rf ../../data/toy_data/base_train/base-toy-$$number.txt.* ; \
 		rm -rf ../../data/toy_data/base_train/base-toy-$$number.txt_* ; \
 		number=`expr $$number + 4` ; \
 	done
 	cd ../../data && mkdir -p test_toy
 	number=300 ; while [ $$number -le 399 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/toy_data/base_test/base-attack-$$number.txt niters 10000 stream_file ../../data/toy_data/stream_test/stream-attack-$$number.txt decay 500 lambda 0.02 interval 500 sketch_file ../../data/test_toy/sketch-attack-$$number.txt chunkify 1 chunk_size 50 ; \
+		bin/streaming/main filetype edgelist file ../../data/toy_data/base_test/base-attack-$$number.txt niters 10000 stream_file ../../data/toy_data/stream_test/stream-attack-$$number.txt decay 500 lambda 0.02 interval 2000 sketch_file ../../data/test_toy/sketch-attack-$$number.txt chunkify 1 chunk_size 50 ; \
 		rm -rf ../../data/toy_data/base_test/base-attack-$$number.txt.* ; \
 		rm -rf ../../data/toy_data/base_test/base-attack-$$number.txt_* ; \
 		number=`expr $$number + 16` ; \
