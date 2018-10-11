@@ -188,14 +188,13 @@ void * dynamic_graph_reader(void * info) {
 			logstream(LOG_ERROR) << "Time label does not exist." << std::endl;
 		assert (k != NULL);
 		el.tme[0] = atoi(k);
-		time_elapsed = atof(k);
 
 		/* Time info for performance eval.*/
-		// k = strtok(NULL, delims);
-		// if (k == NULL)
-		// 	logstream(LOG_ERROR) << "Performance info does not exist." << std::endl;
-		// assert (k != NULL);
-		// time_elapsed = atof(k);
+		k = strtok(NULL, delims);
+		if (k == NULL)
+			logstream(LOG_ERROR) << "Performance info does not exist." << std::endl;
+		assert (k != NULL);
+		time_elapsed = atof(k);
 
 #ifdef DEBUG
 		k = strtok(NULL, delims);
