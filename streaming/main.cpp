@@ -45,6 +45,7 @@ bool std::no_new_tasks = false;
 int DECAY;
 float LAMBDA;
 int INTERVAL;
+int WINDOW;
 bool CHUNKIFY = true;
 int CHUNK_SIZE;
 
@@ -286,6 +287,7 @@ int main(int argc, const char ** argv) {
 	DECAY = get_option_int("decay", 10);
 	LAMBDA = get_option_float("lambda", 0.02);
 	INTERVAL = get_option_int("interval", 1000);
+	WINDOW = get_option_int("window", 500);
 	sketch_file = get_option_string("sketch_file");
 	int to_chunk = get_option_int("chunkify", 1);
 	if (!to_chunk)

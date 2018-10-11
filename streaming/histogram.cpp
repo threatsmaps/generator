@@ -87,7 +87,7 @@ void Histogram::decay(FILE* fp) {
 		}
 		this->t = 0; /* Reset this timer. */
 	}
-	if (this->w >= DECAY) {
+	if (this->w >= WINDOW) {
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			fprintf(fp,"%lu ", this->sketch[i]);
 		}

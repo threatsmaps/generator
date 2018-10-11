@@ -31,6 +31,8 @@ extern int DECAY;
 /* The rate of the decay. */
 extern float LAMBDA;
 /* Determines how many new edges we see before we record the hashed streaming histogram. */
+extern int WINDOW;
+/* Batch size. */
 extern int INTERVAL;
 /* Determine if we want to chunk the string, and how big each chunk is. CHUNK_SIZE > 1 */
 extern bool CHUNKIFY;
