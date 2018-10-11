@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=1000 -DK_HOPS=3 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=1500 -DK_HOPS=3 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -346,5 +346,5 @@ run_single_attack_wget:
 	bin/streaming/main filetype edgelist file ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt niters 10000 stream_file ../../data/attack_$(attack-type)/stream/stream-wget-attack-$(attack-type)-$(number).txt decay 450 lambda 0.02 window 450 interval 3000 sketch_file ../../data/single_attack_wget/sketch-wget-attack-$(attack-type)-$(number).txt chunkify 1 chunk_size 5
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt.*
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt_*
-	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-s-1000-h-3-w-450-i-3000.txt 3000
+	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-s-1500-h-3-w-450-i-3000.txt 3000
 	rm stats.txt
