@@ -120,6 +120,7 @@ namespace graphchi {
 						 * This "else" branch should never be taken because no new edges should be streamed at this point. 
 						 */
 						logstream(LOG_ERROR) << "ERROR: at least one incoming edge of the vertex #" << vertex.id() << " has iterator value 0." << std::endl;
+						assert(false);
 					}
 #endif
 				}
@@ -439,11 +440,13 @@ namespace graphchi {
 						std::stringstream node_out;
 						node_out << it->src[min_itr - 1];
 						node_str = node_out.str();
+/*
 #ifdef DEBUG
 						if (node_str == "0") {
 							logstream(LOG_ERROR) << "Edge has itr: " << it->itr << std::endl;
 						}
 #endif
+*/
 						new_label_str += " " + node_str;
 					}
 #ifdef DEBUG
@@ -533,7 +536,6 @@ namespace graphchi {
 			if (iteration == K_HOPS) {
 				std::base_graph_constructed = true;
 			}
-			// if (!next_itr) {
 			if (std::no_new_tasks){
 				logstream(LOG_DEBUG) << "No new task at the moment...Let's see if we need to stop or wait." << std::endl;
 				if (std::stop) {

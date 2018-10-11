@@ -39,19 +39,26 @@ struct hist_elem Histogram::construct_hist_elem(unsigned long label) {
 	std::default_random_engine r_generator(label);
 	std::default_random_engine c_generator(label / 2);
 	std::default_random_engine beta_generator(label);
+#ifdef DEBUG
 	logstream(LOG_DEBUG) << "(new construction) c = ";
+#endif
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		new_elem.r[i] = gamma_dist(r_generator);
 		new_elem.beta[i] = uniform_dist(beta_generator);
 		new_elem.c[i] = gamma_dist(c_generator);
+#ifdef DEBUG
 		logstream(LOG_DEBUG) << new_elem.c[i] << " ";
+#endif
 	}
+#ifdef DEBUG
 	logstream(LOG_DEBUG) << std::endl;
+#endif
 	gamma_dist.reset();
 	this->histo_param_lock.unlock();
 	return new_elem;
 }
 
+#ifdef DEBUG
 /*!
  * @brief To debug, we use this function to make sure generated values are the same as stored values. 
  */
@@ -68,6 +75,7 @@ void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b
 		}
 	}
 }
+#endif
 
 /*!
  * @brief For decaying values in histogram map. And record the sketch at the file @fp.
@@ -87,6 +95,7 @@ void Histogram::decay(FILE* fp) {
 		}
 		this->t = 0; /* Reset this timer. */
 	}
+	/* Record sketch only when t == WINDOW. */
 	if (this->w >= WINDOW) {
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			fprintf(fp,"%lu ", this->sketch[i]);
@@ -199,36 +208,6 @@ void Histogram::create_sketch() {
 	return;
 }
 
-// void Histogram::get_lock() {
-// 	this->histogram_map_lock.lock();
-// }
-
-// void Histogram::release_lock(){
-// 	this->histogram_map_lock.unlock();
-// }
-
-/*!
- * @brief Remove @label from the histogram_map.
- *
- */
-// void Histogram::remove_label(unsigned long label) {
-// 	std::map<unsigned long, int>::iterator it;
-// 	it = this->histogram_map.find(label);
-// 	if (it != this->histogram_map.end()) {
-// 		it->second--;
-// 		if (it->second == 0){
-// 			this->size--;
-// 		}
-// 	}
-// #ifdef DEBUG
-// 	else {
-// 		logstream(LOG_ERROR) << "Decrement histogram element count failed! The label " << label << " should have been in the histogram, but it is not." << std::endl;		
-// 	}
-// #endif
-
-// 	return;
-// }
-
 void Histogram::record_sketch(FILE* fp) {
 	this->histogram_map_lock.lock();
 	for (int i = 0; i < SKETCH_SIZE; i++) {
@@ -239,15 +218,17 @@ void Histogram::record_sketch(FILE* fp) {
 	return;
 }
 
+#ifdef DEBUG
 /*!
  * @brief Print the histogram map for debugging.
  * Simply returns for now since it slows the program down in CircleCI.
  *
  */
 void Histogram::print_histogram() {
-	// std::map<unsigned long, double>::iterator it;
-	// logstream(LOG_INFO) << "Printing histogram map to the console..." << std::endl;
-	// for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
-	// 	logstream(LOG_INFO) << "[" << it->first << "]->" << it->second << "  ";
+	std::map<unsigned long, double>::iterator it;
+	logstream(LOG_DEBUG) << "Printing histogram map to the console..." << std::endl;
+	for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
+		logstream(LOG_DEBUG) << "[" << it->first << "]->" << it->second << "  ";
 	return;
 }
+#endif

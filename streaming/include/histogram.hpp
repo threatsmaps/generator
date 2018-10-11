@@ -35,12 +35,11 @@ public:
 	void decay(FILE* fp);
 	void update(unsigned long label, bool base);
 	void create_sketch();
-	// void get_lock();
-	// void release_lock();
-	// void remove_label(unsigned long label);
 	void record_sketch(FILE* fp);
+#ifdef DEBUG
 	void comp(unsigned long label, struct hist_elem a, struct hist_elem b);
 	void print_histogram();
+#endif
 
 private:
 	static Histogram* histogram;

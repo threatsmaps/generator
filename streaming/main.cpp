@@ -49,34 +49,19 @@ int WINDOW;
 bool CHUNKIFY = true;
 int CHUNK_SIZE;
 
-/* The following varible is global. */
-// bool next_itr = false;
-
 /* A wrapper function for nanosleep. For runtime performance eval. */
-/*
 void quicksleep() {
 	struct timespec req = {0};
 	req.tv_sec = 0;
 	req.tv_nsec = 0;
 	nanosleep(&req, (struct timespec *)NULL);
 }
-*/
 
 /*!
  * @brief A separate thread execute this function to stream graph from a file.
  */
 void * dynamic_graph_reader(void * info) {
-	// logstream(LOG_DEBUG) << "Waiting to start streaming the graph..." << std::endl;
-	// usleep(100000); /* We do not need to sleep to wait. We have a while loop to do so. */
 	logstream(LOG_DEBUG) << "Streaming begins from file: " << stream_file << std::endl;
-
-	// /* Open the sketch file to write our sketches. */
-	// FILE * fp = fopen(sketch_file.c_str(), "a+");
-	// if (fp == NULL) {
-	// 	logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-	// 	assert(false);
-	// 	return NULL;
-	// }
 
 	/* Open the stats.txt file to write our runtime statistics. */
 	FILE * fs = fopen("stats.txt", "a+");
@@ -88,7 +73,6 @@ void * dynamic_graph_reader(void * info) {
 
 	/* A busy loop to wait until the base graph histogram is constructed. */
 	while(!std::base_graph_constructed) {
-		// logstream(LOG_DEBUG) << "Waiting to proceed... Current iteration: " << ginfo.iteration << std::endl;
 		sleep(0);
 	}
 	/* Once breaking out of the loop, we know the base graph histogram is ready. */
@@ -119,7 +103,7 @@ void * dynamic_graph_reader(void * info) {
 
 	while(fgets(s, 1024, f) != NULL) {
 		/*
-		 * We add more edges and nodes for the graphChi algorithm to compute A CHUNK AT A TIME.
+		 * We add more edges and nodes for the graphChi algorithm to compute A CHUNK (determined by INTERVAL and WINDOW) AT A TIME.
 		 * That is, we will wait until all previous added nodes and edges are done computing,
 		 * before we add new nodes and edges for computation.
 		 */
@@ -228,11 +212,8 @@ void * dynamic_graph_reader(void * info) {
 		logstream(LOG_DEBUG) << "Schedule a new edge with possibly new nodes: " << from << " -> " << to << std::endl;
 #endif
 		if (cnt == INTERVAL) {
-			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
+			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation again. */
 			cnt = 0;
-			/* We first record the sketch from the updated graph. */
-			// logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
-			// hist->record_sketch(fp);
 			pthread_barrier_wait(&std::graph_barrier);
 			/* Record time again for runtime performance eval. */
 			tc = std::time(nullptr);
@@ -249,14 +230,9 @@ void * dynamic_graph_reader(void * info) {
 		logstream(LOG_ERROR) << "Unable to close the stream file: " << stream_file << ". Error code: " << strerror(errno) << std::endl;
 		return NULL;
 	}
-	// if (ferror(fp) != 0 || fclose(fp) != 0) {
-	// 	logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-	// }
 	if (ferror(fs) != 0 || fclose(fs) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the stats file: stats.txt. Error code: " << strerror(errno) << std::endl;
 	}
-	/* After the file is closed, the engine will stop 1000 iterations after the current iteration in which the addition is finished. */
-	// dyngraph_engine->finish_after_iters(1000);
 	return NULL;
 }
 
@@ -323,17 +299,13 @@ int main(int argc, const char ** argv) {
 
 	/* Once the streaming graph is all done, we will record the last sketch that sketches the complete graph. */
 	/* We append the last sketch to the @sketch_file. */
-	// FILE * fp = fopen(sketch_file.c_str(), "a");
-	// if (fp == NULL) {
-	// 	logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
-	// }
-	// assert(fp != NULL);
 	Histogram* hist = Histogram::get_instance();
 
 	logstream(LOG_DEBUG) << "Recording the final complete graph sketch... " << std::endl;
 	if (sfp == NULL) {
 		logstream(LOG_ERROR) << "Sketch file no longer exists... " << std::endl;
 	}
+	assert(sfp != NULL);
 	hist->record_sketch(sfp);
 
 	if (ferror(sfp) != 0 || fclose(sfp) != 0) {
@@ -350,7 +322,5 @@ int main(int argc, const char ** argv) {
 	if (ret_graph == EBUSY) {
 		logstream(LOG_ERROR) << "graph_barrier cannot be destroyed." << std::endl;
 	}
-
-	// metrics_report(m);
 	return 0;
 }

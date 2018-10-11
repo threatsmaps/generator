@@ -49,7 +49,7 @@ namespace graphchi {
 		char *k;
 
 		x.itr = 0; /* At the beginning, itr count is always 0. */
-		/* For base nodes, we will deal with them separately first, so we do not need to mark them new. */
+		/* For base nodes, we will deal with them separately first, so we do not need to mark them new or include other time information. */
 		x.new_src = false;
 		x.new_dst = false;
 	
