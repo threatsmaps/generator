@@ -343,8 +343,8 @@ attack-type=baseline
 
 run_single_attack_wget:
 	cd ../../data && mkdir -p single_attack_wget
-	bin/streaming/main filetype edgelist file ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt niters 10000 stream_file ../../data/attack_$(attack-type)/stream/stream-wget-attack-$(attack-type)-$(number).txt decay 450 lambda 0.02 window 200 interval 3000 sketch_file ../../data/single_attack_wget/sketch-wget-attack-$(attack-type)-$(number).txt chunkify 1 chunk_size 5
+	bin/streaming/main filetype edgelist file ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt niters 10000 stream_file ../../data/attack_$(attack-type)/stream/stream-wget-attack-$(attack-type)-$(number).txt decay 450 lambda 0.02 window 500 interval 3000 sketch_file ../../data/single_attack_wget/sketch-wget-attack-$(attack-type)-$(number).txt chunkify 1 chunk_size 5
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt.*
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt_*
-	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-s-2000-h-3-w-200-i-3000.txt 3000
+	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-s-2000-h-3-w-500-i-3000.txt 3000
 	rm stats.txt
