@@ -531,7 +531,7 @@ namespace graphchi {
 		void after_iteration(int iteration, graphchi_context &gcontext) {
 #ifdef DEBUG
 			logstream(LOG_DEBUG) << "Current Iteration: " << iteration << std::endl;
-			hist->print_histogram();
+			// hist->print_histogram();
 #endif
 			if (iteration == K_HOPS) {
 				std::base_graph_constructed = true;
