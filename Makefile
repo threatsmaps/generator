@@ -297,16 +297,16 @@ run_wget_baseline_attack:
 		rm stats.txt ; \
 		number=`expr $$number + 1` ; \
 	done
-	cp ../../data/train_wget/sketch-wget-6.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-12.txt ../../data/test_wget_baseline
 	cp ../../data/train_wget/sketch-wget-14.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-25.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-43.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-27.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-48.txt ../../data/test_wget_baseline
 	cp ../../data/train_wget/sketch-wget-53.txt ../../data/test_wget_baseline
 	cp ../../data/train_wget/sketch-wget-68.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-72.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-86.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-92.txt ../../data/test_wget_baseline
-	cp ../../data/train_wget/sketch-wget-103.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-70.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-82.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-95.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-102.txt ../../data/test_wget_baseline
 
 run_wget_interval_attack:
 	cd ../../data && mkdir -p test_wget_interval
@@ -318,16 +318,16 @@ run_wget_interval_attack:
 		rm stats.txt ; \
 		number=`expr $$number + 1` ; \
 	done
-	mv ../../data/train_wget/sketch-wget-6.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-12.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-14.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-25.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-43.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-27.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-48.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-53.txt ../../data/test_wget_interval
 	mv ../../data/train_wget/sketch-wget-68.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-72.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-86.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-92.txt ../../data/test_wget_interval
-	mv ../../data/train_wget/sketch-wget-103.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-70.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-82.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-95.txt ../../data/test_wget_interval
+	mv ../../data/train_wget/sketch-wget-102.txt ../../data/test_wget_interval
 
 number=0
 
