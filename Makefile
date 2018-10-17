@@ -232,22 +232,22 @@ run_attack:
 	mv ../../data/train_streamspot/sketch-download-424.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-426.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-428.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-432.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-435.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-439.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-441.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-445.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-448.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-446.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-452.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-457.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-461.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-462.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-469.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-471.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-472.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-473.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-475.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-478.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-483.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-486.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-480.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-485.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-495.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-499.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-500.txt ../../data/test_streamspot/
