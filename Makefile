@@ -154,8 +154,8 @@ run_attack:
 	mv ../../data/train_streamspot/sketch-youtube-8.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-13.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-16.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-youtube-20.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-23.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-youtube-24.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-29.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-35.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-youtube-38.txt ../../data/test_streamspot/
@@ -217,8 +217,8 @@ run_attack:
 	mv ../../data/train_streamspot/sketch-vgame-254.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-259.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-261.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-vgame-263.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-264.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-vgame-266.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-273.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-276.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-282.txt ../../data/test_streamspot/
@@ -240,22 +240,22 @@ run_attack:
 	mv ../../data/train_streamspot/sketch-download-452.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-457.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-461.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-464.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-467.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-470.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-462.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-469.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-471.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-473.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-475.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-478.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-483.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-486.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-download-497.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-download-495.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-download-499.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-500.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-503.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-509.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-513.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-516.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-cnn-526.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-cnn-522.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-528.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-531.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-cnn-536.txt ../../data/test_streamspot/
