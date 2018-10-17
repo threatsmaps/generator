@@ -218,7 +218,7 @@ run_attack:
 	mv ../../data/train_streamspot/sketch-vgame-259.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-261.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-263.txt ../../data/test_streamspot/
-	mv ../../data/train_streamspot/sketch-vgame-264.txt ../../data/test_streamspot/
+	mv ../../data/train_streamspot/sketch-vgame-266.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-273.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-276.txt ../../data/test_streamspot/
 	mv ../../data/train_streamspot/sketch-vgame-282.txt ../../data/test_streamspot/
