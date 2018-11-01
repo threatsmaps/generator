@@ -373,3 +373,44 @@ run_single_attack_wget:
 	rm -rf ../../data/attack_$(attack-type)/base/base-wget-attack-$(attack-type)-$(number).txt_*
 	python streaming/stats.py stats.txt ../../output/perf-wget-attack-$(attack-type)-$(number)-s-2000-h-3-w-450-i-10000.txt 10000
 	rm stats.txt
+
+run_cadets:
+	cd ../../data && mkdir -p train_cadets
+	number=0 ; while [ $$number -le 49 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/benign/base/base-benign1-$$number.txt niters 10000 stream_file ../../data/benign/stream/stream-benign1-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_cadets/sketch-benign1-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/benign/base/base-benign1-$$number.txt.* ; \
+		rm -rf ../../data/benign/base/base-benign1-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 9 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/benign/base/base-benign2-$$number.txt niters 10000 stream_file ../../data/benign/stream/stream-benign2-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_cadets/sketch-benign2-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/benign/base/base-benign2-$$number.txt.* ; \
+		rm -rf ../../data/benign/base/base-benign2-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 49 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/benign/base/base-benign3-$$number.txt niters 10000 stream_file ../../data/benign/stream/stream-benign3-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_cadets/sketch-benign3-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/benign/base/base-benign3-$$number.txt.* ; \
+		rm -rf ../../data/benign/base/base-benign3-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+
+run_cadets_attack:
+	cd ../../data && mkdir -p test_cadets
+	number=0 ; while [ $$number -le 2 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/attack/base/base-attack-$$number.txt niters 10000 stream_file ../../data/attack/stream/stream-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_cadets/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/attack/base/base-attack-$$number.txt.* ; \
+		rm -rf ../../data/attack/base/base-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	mv ../../data/train_cadets/sketch-benign1-6.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign1-15.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign1-23.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign1-37.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign1-46.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign2-3.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign3-2.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign3-13.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign3-27.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign3-32.txt ../../data/test_cadets
+	mv ../../data/train_cadets/sketch-benign3-48.txt ../../data/test_cadets
