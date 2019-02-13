@@ -156,8 +156,8 @@ void Histogram::update(unsigned long label, bool base) {
 			}
 		} else {
 			srand(label);
-			int pos1 = rand();
-			int pos2 = rand();
+			int pos1 = rand() % PREGEN;
+			int pos2 = rand() % PREGEN;
 
 			for (int i = 0; i < SKETCH_SIZE; i++) {
 				/* Compute the new hash value a. */
@@ -265,6 +265,9 @@ void Histogram::create_sketch() {
 			this->hash[i] = a_i;
 		}
 	} else {
+#ifdef DEBUG
+		logstream(LOG_DEBUG) << "You are now in in-memory mode; be aware of memory consumption..." << std::endl;
+#endif
 		/* Create all Params needed for sketch construction. */
 		for (unsigned long i = 0; i < (unsigned long)PREGEN; i++) {
 			std::default_random_engine r_generator(i);
@@ -284,6 +287,9 @@ void Histogram::create_sketch() {
 #endif
 			gamma_dist.reset();
 		}
+#ifdef DEBUG
+                logstream(LOG_DEBUG) << "Populating " << PREGEN << " distribution parameters is done..." << std::endl;
+#endif
 
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();

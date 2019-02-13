@@ -461,7 +461,13 @@ namespace graphchi {
 							// if (first) {
 							// 	hist->decay(sfp);  /* Only increment decay value once. */ 
 							// }
+#ifdef DEBUG
+							logstream(LOG_DEBUG) << "Updating histogram..." << vertex.id() << std::endl;
+#endif
 							hist->update(*ti, false);
+#ifdef DEBUG
+							logstream(LOG_DEBUG) << "Histogram updated..." << vertex.id() << std::endl;
+#endif
 							// first = false;
 						}
 					}
