@@ -41,6 +41,11 @@ extern int CHUNK_SIZE;
 extern FILE * sfp;
 /* After MULTIPLE of INTERVAL, we will record the sketch. (i.e., how often do we record a sketch). */
 extern int MULTIPLE;
+/* PREGEN and MEMORY are now compiler defined.*/
+/* Number of Histogram Parameters pre-generated and saved in memory. */
+// extern int PREGEN;
+/* Whether to pre-generate histogram parameters in memory or not.*/
+// extern bool MEMORY;
 
 /* In a truly streaming setting, GraphChi does not allow dynamic vertex/edge type.
  * We therefore must fixed the neighborhood we are exploring.

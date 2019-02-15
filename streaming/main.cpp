@@ -46,6 +46,8 @@ int WINDOW;
 bool CHUNKIFY = true;
 int CHUNK_SIZE;
 int MULTIPLE;
+// int PREGEN;
+// bool MEMORY = true;
 
 /* The following varible is global. */
 // bool next_itr = false;
@@ -251,6 +253,12 @@ int main(int argc, const char ** argv) {
 		CHUNKIFY = false;
 	CHUNK_SIZE = get_option_int("chunk_size", 5);
 	MULTIPLE = get_option_int("multiple", 1);
+	// PREGEN = get_option_int("pregen", 10000);
+	// int in_memory = get_option_int("memory", 1);
+	// if (!in_memory) {
+	// 	MEMORY = false;
+	// 	PREGEN = 1;	//Make sure we won't waste space in Histogram class.
+	// }
 
 	/* Open the sketch file to write. */
 	sfp = fopen(sketch_file.c_str(), "a");

@@ -15,6 +15,7 @@
 #include <fstream>
 #include <math.h>
 #include <random>
+#include <cstdlib>
 
 #include "include/helper.hpp" 
 
@@ -138,18 +139,38 @@ void Histogram::update(unsigned long label, bool base) {
 	 * Hash updates only happen in streaming.
 	 */
 	if (!base) {
-		struct hist_elem generated_param = this->construct_hist_elem(label);
-		for (int i = 0; i < SKETCH_SIZE; i++) {
-			/* Compute the new hash value a. */
-			double r = generated_param.r[i];
-			double beta = generated_param.beta[i];
-			double c = generated_param.c[i];
-			double y = pow(M_E, log((rst.first)->second) - r * beta);
-			double a = c / (y * pow(M_E, r));
+		if (!MEMORY) {
+			struct hist_elem generated_param = this->construct_hist_elem(label);
+			for (int i = 0; i < SKETCH_SIZE; i++) {
+				/* Compute the new hash value a. */
+				double r = generated_param.r[i];
+				double beta = generated_param.beta[i];
+				double c = generated_param.c[i];
+				double y = pow(M_E, log((rst.first)->second) - r * beta);
+				double a = c / (y * pow(M_E, r));
 
-			if (a < this->hash[i]) {
-				this->hash[i] = a;
-				this->sketch[i] = (rst.first)->first;
+				if (a < this->hash[i]) {
+					this->hash[i] = a;
+					this->sketch[i] = (rst.first)->first;
+				}
+			}
+		} else {
+			srand(label);
+			int pos1 = rand();
+			int pos2 = rand();
+
+			for (int i = 0; i < SKETCH_SIZE; i++) {
+				/* Compute the new hash value a. */
+				double r = this->gamma_param[pos1][i];
+				double beta = this->uniform_param[pos1][i];
+				double c = this->gamma_param[pos2][i];
+				double y = pow(M_E, log((rst.first)->second) - r * beta);
+				double a = c / (y * pow(M_E, r));
+
+				if (a < this->hash[i]) {
+					this->hash[i] = a;
+					this->sketch[i] = (rst.first)->first;
+				}
 			}
 		}
 	}
@@ -203,46 +224,98 @@ void Histogram::remove_label(unsigned long label) {
  */
 void Histogram::create_sketch() {
 	this->histogram_map_lock.lock();
-	/* Locally save some sketch parameters. */
-	std::map<unsigned long, struct hist_elem> base_map;
-	for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
-		unsigned long label = it->first;
-		struct hist_elem new_elem = this->construct_hist_elem(label);
-		base_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
-	}
-
-	for (int i = 0; i < SKETCH_SIZE; i++) {
-		/* Compute the hash value a. */
-		std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();
-		unsigned long label = histoit->first;
-		std::map<unsigned long, struct hist_elem>::iterator basemapit;
-		basemapit = base_map.find(label);
-		if (basemapit == base_map.end()){
-			logstream(LOG_ERROR) << "Label: " << label << " should exist in local base map, but it does not. " << std::endl;
-			return;
+	if (!MEMORY) {
+		/* Locally save some sketch parameters. */
+		std::map<unsigned long, struct hist_elem> base_map;
+		for (std::map<unsigned long, double>::iterator it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
+			unsigned long label = it->first;
+			struct hist_elem new_elem = this->construct_hist_elem(label);
+			base_map.insert(std::pair<unsigned long, struct hist_elem>(label, new_elem));
 		}
-		struct hist_elem histo_param = basemapit->second;
-		double y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
-		double a_i = histo_param.c[i] / (y * pow(M_E, histo_param.r[i]));
-		unsigned long s_i = histoit->first;
-		for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
-			label = histoit->first;
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			/* Compute the hash value a. */
+			std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();
+			unsigned long label = histoit->first;
+			std::map<unsigned long, struct hist_elem>::iterator basemapit;
 			basemapit = base_map.find(label);
 			if (basemapit == base_map.end()){
 				logstream(LOG_ERROR) << "Label: " << label << " should exist in local base map, but it does not. " << std::endl;
 				return;
 			}
-			histo_param = basemapit->second;
-			y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
-			double a = histo_param.c[i] / (y * pow(M_E, histo_param.r[i])); 
-			if (a < a_i) {
-				a_i = a;
-				s_i = histoit->first;
+			struct hist_elem histo_param = basemapit->second;
+			double y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
+			double a_i = histo_param.c[i] / (y * pow(M_E, histo_param.r[i]));
+			unsigned long s_i = histoit->first;
+			for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
+				label = histoit->first;
+				basemapit = base_map.find(label);
+				if (basemapit == base_map.end()){
+					logstream(LOG_ERROR) << "Label: " << label << " should exist in local base map, but it does not. " << std::endl;
+					return;
+				}
+				histo_param = basemapit->second;
+				y = pow(M_E, log(histoit->second) - histo_param.r[i] * histo_param.beta[i]);
+				double a = histo_param.c[i] / (y * pow(M_E, histo_param.r[i])); 
+				if (a < a_i) {
+					a_i = a;
+					s_i = histoit->first;
+				}
 			}
+			this->sketch[i] = s_i;
+			this->hash[i] = a_i;
 		}
-		this->sketch[i] = s_i;
-		this->hash[i] = a_i;
+	} else {
+		/* Create all Params needed for sketch construction. */
+		for (unsigned long i = 0; i < (unsigned long)PREGEN; i++) {
+			std::default_random_engine r_generator(i);
+			std::default_random_engine beta_generator(i);
+#ifdef DEBUG
+			// logstream(LOG_DEBUG) << "(new construction) c = ";
+#endif
+			for (int j = 0; j < SKETCH_SIZE; j++) {
+				this->gamma_param[i][j] = gamma_dist(r_generator);
+				this->uniform_param[i][j] = uniform_dist(beta_generator);
+#ifdef DEBUG
+				// logstream(LOG_DEBUG) << new_elem.c[i] << " ";
+#endif
+			}
+#ifdef DEBUG
+			// logstream(LOG_DEBUG) << std::endl;
+#endif
+			gamma_dist.reset();
+		}
+
+		for (int i = 0; i < SKETCH_SIZE; i++) {
+			std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();
+			unsigned long label = histoit->first;
+
+			srand(label);
+			int pos1 = rand() % PREGEN; //For Gamma and uniform
+			int pos2 = rand() % PREGEN; //For the other gamma
+
+			double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
+			double a_i = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+
+			unsigned long s_i = histoit->first;
+			for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
+				label = histoit->first;
+				
+				srand(label);
+				pos1 = rand() % PREGEN;
+				pos2 = rand() % PREGEN;
+
+				y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
+				double a = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+				if (a < a_i) {
+					a_i = a;
+					s_i = histoit->first;
+				}
+			}
+			this->sketch[i] = s_i;
+			this->hash[i] = a_i;
+		}
 	}
+
 	this->histogram_map_lock.unlock();
 	return;
 }
