@@ -784,7 +784,7 @@ namespace graphchi {
             
             /* Main loop */
             for(iter=0; iter < niters; iter++) {
-                logstream(LOG_INFO) << "Start iteration: " << iter << std::endl;
+                logstream(LOG_ERROR) << "Start iteration: " << iter << std::endl;
                 logstream(LOG_INFO) << "Total number of iterations: " << niters << std::endl;
                 
                 initialize_iter();
@@ -867,7 +867,7 @@ namespace graphchi {
                     memoryshard->set_disable_async_writes(randomization);
                     
                     sub_interval_st = interval_st;
-                    logstream(LOG_INFO) << chicontext.runtime() << "s: Starting: " 
+                    logstream(LOG_ERROR) << chicontext.runtime() << "s: Starting: " 
                     << sub_interval_st << " -- " << interval_en << std::endl;
                     
                     while (sub_interval_st <= interval_en) {
