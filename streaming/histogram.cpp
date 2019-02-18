@@ -162,9 +162,12 @@ void Histogram::update(unsigned long label, bool base) {
 			for (int i = 0; i < SKETCH_SIZE; i++) {
 				/* Compute the new hash value a. */
 				double r = this->gamma_param[pos1][i];
-				double beta = this->uniform_param[pos1][i];
+				// double beta = this->uniform_param[pos1][i];
 				double c = this->gamma_param[pos2][i];
-				double y = pow(M_E, log((rst.first)->second) - r * beta);
+				// double y = pow(M_E, log((rst.first)->second) - r * beta);
+				// 		    = pow(M_E, log((rst.first)->second)) / pow(M_E, r * beta)
+				//          = (rst.first)->second) / this->uniform_param[pos1][i];
+				double y = (rst.first)->second) / this->uniform_param[pos1][i];
 				double a = c / (y * this->power_r[pos1][i]);
 
 				if (a < this->hash[i]) {
@@ -279,6 +282,9 @@ void Histogram::create_sketch() {
 				this->gamma_param[i][j] = gamma_dist(r_generator);
 				this->uniform_param[i][j] = uniform_dist(beta_generator);
 				this->power_r[i][j] = pow(M_E, this->gamma_param[i][j]);
+
+				// uniform_param stores e^(r * beta) instead
+				this->uniform_param[i][j] = pow(M_E, this->gamma_param[i][j] * this->uniform_param[i][j]);
 #ifdef DEBUG
 				// logstream(LOG_DEBUG) << new_elem.c[i] << " ";
 #endif
@@ -300,8 +306,9 @@ void Histogram::create_sketch() {
 			int pos1 = rand() % PREGEN; //For Gamma and uniform
 			int pos2 = rand() % PREGEN; //For the other gamma
 
-			double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
-			double a_i = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+			// double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
+			double y = histoit->second / this->uniform_param[pos1][j];
+			double a_i = this->gamma_param[pos2][i] / (y * this->power_r[pos1][i]);
 
 			unsigned long s_i = histoit->first;
 			for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
@@ -311,8 +318,9 @@ void Histogram::create_sketch() {
 				pos1 = rand() % PREGEN;
 				pos2 = rand() % PREGEN;
 
-				y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
-				double a = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+				// y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
+				y = histoit->second / this->uniform_param[pos1][i];
+				double a = this->gamma_param[pos2][i] / (y * pow(M_E, this->power_r[pos1][i]);
 				if (a < a_i) {
 					a_i = a;
 					s_i = histoit->first;
