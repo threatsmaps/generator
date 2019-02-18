@@ -558,8 +558,8 @@ namespace graphchi {
             logstream(LOG_DEBUG) << "Total deleted: " << ndeleted << " total edges: " << this->num_edges() << std::endl;
 
             if (added_edges - last_commit < max_edge_buffer * 0.8 && ndeleted < this->num_edges() * 0.1) {
-                logstream(LOG_INFO) <<  << "==============================" << std::endl;
-                logstream(LOG_INFO) <<  << "No time to commit yet.... Only " << (added_edges - last_commit) << " / " << max_edge_buffer
+                logstream(LOG_INFO) << "==============================" << std::endl;
+                logstream(LOG_INFO) << "No time to commit yet.... Only " << (added_edges - last_commit) << " / " << max_edge_buffer
                 << " in buffers" << std::endl;
                 return;
             }
