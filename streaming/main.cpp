@@ -232,7 +232,7 @@ int main(int argc, const char ** argv) {
 	 * Currently required. */
 	metrics m("Streaming Extractor");
 	
-	global_logger().set_log_level(LOG_DEBUG);
+	global_logger().set_log_level(LOG_INFO);
 
 	/* Parameters from command line. */
 	std::string filename = get_option_string("file");
