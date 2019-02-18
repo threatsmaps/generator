@@ -307,7 +307,7 @@ void Histogram::create_sketch() {
 			int pos2 = rand() % PREGEN; //For the other gamma
 
 			// double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
-			double y = histoit->second / this->uniform_param[pos1][j];
+			double y = histoit->second / this->uniform_param[pos1][i];
 			double a_i = this->gamma_param[pos2][i] / (y * this->power_r[pos1][i]);
 
 			unsigned long s_i = histoit->first;
