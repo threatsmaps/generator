@@ -92,10 +92,10 @@ void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b
 	// if (this->t >= DECAY) {
 		std::map<unsigned long, double>::iterator it;
 		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
-			it->second *= pow(M_E, -LAMBDA); /* M_E is defined in <cmath>. */
+			it->second *= this->powerful; /* M_E is defined in <cmath>. */
 		}
 		for (int i = 0; i < SKETCH_SIZE; i++) {
-			this->hash[i] *= pow(M_E, -LAMBDA);
+			this->hash[i] *= this->powerful;
 		}
 		// this->t = 0;  /* Reset this timer. */
 	// }
@@ -165,7 +165,7 @@ void Histogram::update(unsigned long label, bool base) {
 				double beta = this->uniform_param[pos1][i];
 				double c = this->gamma_param[pos2][i];
 				double y = pow(M_E, log((rst.first)->second) - r * beta);
-				double a = c / (y * pow(M_E, r));
+				double a = c / (y * this->power_r[pos1][i]);
 
 				if (a < this->hash[i]) {
 					this->hash[i] = a;
@@ -278,6 +278,7 @@ void Histogram::create_sketch() {
 			for (int j = 0; j < SKETCH_SIZE; j++) {
 				this->gamma_param[i][j] = gamma_dist(r_generator);
 				this->uniform_param[i][j] = uniform_dist(beta_generator);
+				this->power_r[i][j] = pow(M_E, this->gamma_param[i][j]);
 #ifdef DEBUG
 				// logstream(LOG_DEBUG) << new_elem.c[i] << " ";
 #endif
