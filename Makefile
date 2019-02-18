@@ -444,3 +444,43 @@ theia_e3:
 		rm -rf ../../data/theia-e3/test/base/base-theia-e3-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
+
+camflow_apt:
+	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 124 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 2000 multiple 1 sketch_file ../../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 24 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt niters 100000 stream_file ../../data/camflow-apt/test/stream/stream-camflow-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 2000 multiple 1 sketch_file ../../data/camflow-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt.* ; \
+		rm -rf ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-5.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-9.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-14.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-18.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-21.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-26.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-34.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-38.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-44.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-47.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-50.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-58.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-62.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-69.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-72.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-77.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-80.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-85.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-94.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-99.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-102.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-107.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-112.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-119.txt ../../data/camflow-apt/test_sketch/
+	mv ../../data/camflow-apt/train_sketch/sketch-benign-123.txt ../../data/camflow-apt/test_sketch/
