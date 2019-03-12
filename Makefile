@@ -448,13 +448,13 @@ theia_e3:
 fivedirections_e3:
 	cd ../../data/fivedirections-e3 && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 112 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/train/stream/stream-fivedirections-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 20000 multiple 1 sketch_file ../../data/fivedirections-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/train/stream/stream-fivedirections-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/fivedirections-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt.* ; \
 		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 	number=0 ; while [ $$number -le 54 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/test/stream/stream-fivedirections-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 20000 multiple 1 sketch_file ../../data/fivedirections-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/test/stream/stream-fivedirections-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/fivedirections-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt.* ; \
 		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
@@ -463,13 +463,13 @@ fivedirections_e3:
 clearscope_e3:
 	cd ../../data/clearscope-e3 && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 43 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/train/stream/stream-clearscope-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 20000 multiple 1 sketch_file ../../data/clearscope-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/train/stream/stream-clearscope-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/clearscope-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt.* ; \
 		rm -rf ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 	number=0 ; while [ $$number -le 50 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/test/stream/stream-clearscope-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 20000 multiple 1 sketch_file ../../data/clearscope-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/test/stream/stream-clearscope-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/clearscope-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt.* ; \
 		rm -rf ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
@@ -504,28 +504,3 @@ spade_apt:
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-5.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-9.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-14.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-18.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-21.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-26.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-34.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-38.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-44.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-47.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-50.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-58.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-62.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-69.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-72.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-77.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-80.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-85.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-94.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-99.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-102.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-107.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-112.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-119.txt ../../data/spade-wget-apt/test_sketch/
-	mv ../../data/spade-wget-apt/train_sketch/sketch-benign-123.txt ../../data/spade-wget-apt/test_sketch/
