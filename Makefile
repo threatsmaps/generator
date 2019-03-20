@@ -448,13 +448,13 @@ theia_e3:
 fivedirections_e3:
 	cd ../../data/fivedirections-e3 && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 112 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/train/stream/stream-fivedirections-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/fivedirections-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/train/stream/stream-fivedirections-e3-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 10000 multiple 1 sketch_file ../../data/fivedirections-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt.* ; \
 		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 	number=0 ; while [ $$number -le 54 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/test/stream/stream-fivedirections-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/fivedirections-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt niters 100000 stream_file ../../data/fivedirections-e3/test/stream/stream-fivedirections-e3-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 10000 multiple 1 sketch_file ../../data/fivedirections-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt.* ; \
 		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
