@@ -504,3 +504,18 @@ spade_apt:
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
+
+camflow_shellshock:
+	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 124 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/train/stream/stream-shellshock-benign-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/shellshock-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt.* ; \
+		rm -rf ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 24 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/test/stream/stream-shellshock-attack-$$number.txt decay 500 lambda 0.02 window 500 interval 5000 multiple 1 sketch_file ../../data/shellshock-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt.* ; \
+		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
