@@ -159,7 +159,7 @@ void Histogram::update(unsigned long label, bool base) {
 			// int pos1 = rand() % PREGEN;
 			// int pos2 = rand() % PREGEN;
 			int pos1 = label % PREGEN;
-			int pos2 = hash(label) % PREGEN;
+			int pos2 = graphchi::hash((unsigned char*)&label) % PREGEN;
 
 			for (int i = 0; i < SKETCH_SIZE; i++) {
 				/* Compute the new hash value a. */
@@ -309,7 +309,7 @@ void Histogram::create_sketch() {
 			// int pos1 = rand() % PREGEN; //For Gamma and uniform
 			// int pos2 = rand() % PREGEN; //For the other gamma
 			int pos1 = label % PREGEN;
-			int pos2 = hash(label) % PREGEN;
+			int pos2 = graphchi::hash((unsigned char*)&label) % PREGEN;
 
 			// double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
 			double y = histoit->second / this->uniform_param[pos1][i];
@@ -323,7 +323,7 @@ void Histogram::create_sketch() {
 				// pos1 = rand() % PREGEN;
 				// pos2 = rand() % PREGEN;
 				int pos1 = label % PREGEN;
-				int pos2 = hash(label) % PREGEN;
+				int pos2 = graphchi::hash((unsigned char*)&label) % PREGEN;
 
 				// y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
 				y = histoit->second / this->uniform_param[pos1][i];
