@@ -72,12 +72,6 @@ void * dynamic_graph_reader(void * info) {
 		// logstream(LOG_DEBUG) << "Waiting to proceed... Current iteration: " << ginfo.iteration << std::endl;
 		sleep(0);
 	}
-	/* Once breaking out of the loop, we know the base graph histogram is ready. */
-	/* Get the singleton of histogram map. */
-	Histogram* hist = Histogram::get_instance();
-
-	/* We create and initailize the sketch of the histogram. */
-	hist->create_sketch();
 
 	/* Open the file for streaming. */
 	FILE * f = fopen(stream_file.c_str(), "r");

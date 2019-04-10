@@ -543,6 +543,7 @@ namespace graphchi {
 #endif
 			if (iteration == K_HOPS) {
 				std::base_graph_constructed = true;
+				hist->create_sketch();
 			}
 			if (std::no_new_tasks){
 				logstream(LOG_DEBUG) << "No new task at the moment...Let's see if we need to stop or wait." << std::endl;
