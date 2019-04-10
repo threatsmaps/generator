@@ -273,8 +273,9 @@ void Histogram::create_sketch() {
 #endif
 		/* Create all Params needed for sketch construction. */
 		for (unsigned long i = 0; i < (unsigned long)PREGEN; i++) {
-			std::default_random_engine r_generator(i);
-			std::default_random_engine beta_generator(i);
+			int randomized_i = rand()
+			std::default_random_engine r_generator(randomized_i);
+			std::default_random_engine beta_generator(randomized_i);
 #ifdef DEBUG
 			// logstream(LOG_DEBUG) << "(new construction) c = ";
 #endif
