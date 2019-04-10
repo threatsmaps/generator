@@ -155,9 +155,11 @@ void Histogram::update(unsigned long label, bool base) {
 				}
 			}
 		} else {
-			srand(label);
-			int pos1 = rand() % PREGEN;
-			int pos2 = rand() % PREGEN;
+			// srand(label);
+			// int pos1 = rand() % PREGEN;
+			// int pos2 = rand() % PREGEN;
+			int pos1 = label % PREGEN;
+			int pos2 = hash(label) % PREGEN;
 
 			for (int i = 0; i < SKETCH_SIZE; i++) {
 				/* Compute the new hash value a. */
@@ -303,9 +305,11 @@ void Histogram::create_sketch() {
 			std::map<unsigned long, double>::iterator histoit = this->histogram_map.begin();
 			unsigned long label = histoit->first;
 
-			srand(label);
-			int pos1 = rand() % PREGEN; //For Gamma and uniform
-			int pos2 = rand() % PREGEN; //For the other gamma
+			// srand(label);
+			// int pos1 = rand() % PREGEN; //For Gamma and uniform
+			// int pos2 = rand() % PREGEN; //For the other gamma
+			int pos1 = label % PREGEN;
+			int pos2 = hash(label) % PREGEN;
 
 			// double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
 			double y = histoit->second / this->uniform_param[pos1][i];
@@ -315,9 +319,11 @@ void Histogram::create_sketch() {
 			for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
 				label = histoit->first;
 				
-				srand(label);
-				pos1 = rand() % PREGEN;
-				pos2 = rand() % PREGEN;
+				// srand(label);
+				// pos1 = rand() % PREGEN;
+				// pos2 = rand() % PREGEN;
+				int pos1 = label % PREGEN;
+				int pos2 = hash(label) % PREGEN;
 
 				// y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
 				y = histoit->second / this->uniform_param[pos1][i];
