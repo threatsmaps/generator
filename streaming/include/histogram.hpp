@@ -18,6 +18,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <math.h>
 #include "logger/logger.hpp"
 #include "def.hpp"
 
@@ -47,11 +48,13 @@ private:
 	Histogram() {
 		this->t = 0;
 		this->w = 0;
+		this->powerful = pow(M_E, -LAMBDA);
 	}
 
 	std::map<unsigned long, double> histogram_map; /* We use unicorn.db for hash values. histogram_map only maps label to counter. */
 	unsigned long sketch[SKETCH_SIZE];
 	double hash[SKETCH_SIZE];
+	double powerful;
 
 	int t; /* If t reaches decay, we decay the cnt and hash value by e^(-lambda).*/
 	int w; /* If w reaches window, we record the sketch. */

@@ -88,10 +88,10 @@ void Histogram::decay(FILE* fp) {
 	if (this->t >= DECAY) {
 		std::map<unsigned long, double>::iterator it;
 		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++) {
-			it->second *= pow(M_E, -LAMBDA); /* M_E is defined in <cmath>. */
+			it->second *= this->powerful;
 		}
 		for (int i = 0; i < SKETCH_SIZE; i++) {
-			this->hash[i] *= pow(M_E, -LAMBDA);
+			this->hash[i] *= this->powerful;
 		}
 		this->t = 0; /* Reset this timer. */
 	}
