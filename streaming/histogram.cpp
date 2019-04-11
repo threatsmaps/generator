@@ -228,6 +228,7 @@ void Histogram::create_sketch() {
 		}
 	} else {
 		/* Create all Params needed for sketch construction. */
+		srand(36);
 		for (unsigned long i = 0; i < (unsigned long)PREGEN; i++) {
 			int randomized_i = rand();
 			std::default_random_engine r_generator(randomized_i);
