@@ -168,6 +168,7 @@ void Histogram::update(unsigned long label, bool base) {
 					this->hash[i] = a;
 					this->sketch[i] = (rst.first)->first;
 				}
+			}
 		}
 	}
 	this->histogram_map_lock.unlock();
