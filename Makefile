@@ -1,6 +1,6 @@
 INCFLAGS = -I/usr/local/include/ -I./src/
 
-CPP = g++-4.9
+CPP = g++
 CPPFLAGS = -std=c++11 -g -O3 $(INCFLAGS)  -fopenmp -Wall -Wno-strict-aliasing -lpthread
 LINKERFLAGS = -lz
 DEBUGFLAGS = -g -ggdb $(INCFLAGS)
