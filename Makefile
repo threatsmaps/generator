@@ -293,16 +293,16 @@ run_wget_baseline_attack:
 		rm -rf ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
-	mv ../../data/train_wget/sketch-wget-12.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-14.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-27.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-48.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-53.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-68.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-70.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-82.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-95.txt ../../data/test_wget_baseline
-	mv ../../data/train_wget/sketch-wget-102.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-12.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-14.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-27.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-48.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-53.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-68.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-70.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-82.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-95.txt ../../data/test_wget_baseline
+	cp ../../data/train_wget/sketch-wget-102.txt ../../data/test_wget_baseline
 
 run_wget_interval_attack:
 	cd ../../data && mkdir -p test_wget_interval
