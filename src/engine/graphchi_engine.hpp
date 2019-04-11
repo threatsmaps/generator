@@ -863,7 +863,7 @@ namespace graphchi {
                     memoryshard->set_disable_async_writes(randomization);
                     
                     sub_interval_st = interval_st;
-                    logstream(LOG_INFO) << chicontext.runtime() << "s: Starting: " 
+                    logstream(LOG_DEBUG) << chicontext.runtime() << "s: Starting: "
                     << sub_interval_st << " -- " << interval_en << std::endl;
                     
                     while (sub_interval_st <= interval_en) {
