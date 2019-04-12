@@ -58,6 +58,7 @@ private:
 
 	double gamma_param[PREGEN][SKETCH_SIZE];
 	double uniform_param[PREGEN][SKETCH_SIZE];
+	double power_r[PREGEN][SKETCH_SIZE];
 
 	int t; /* If t reaches decay, we decay the cnt and hash value by e^(-lambda).*/
 	int w; /* If w reaches window, we record the sketch. */

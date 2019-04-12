@@ -162,7 +162,7 @@ void Histogram::update(unsigned long label, bool base) {
 				double beta = this->uniform_param[pos1][i];
 				double c = this->gamma_param[pos2][i];
 				double y = pow(M_E, log((rst.first)->second) - r * beta);
-				double a = c / (y * pow(M_E, r));
+				double a = c / (y * this->power_r[pos1][i]);
 
 				if (a < this->hash[i]) {
 					this->hash[i] = a;
@@ -237,6 +237,7 @@ void Histogram::create_sketch() {
 			for (int j = 0; j < SKETCH_SIZE; j++) {
 				this->gamma_param[i][j] = gamma_dist(r_generator);
 				this->uniform_param[i][j] = uniform_dist(beta_generator);
+				this->power_r[i][j] = pow(M_E, this->gamma_param[i][j]);
 			}
 			gamma_dist.reset();
 		}
@@ -250,7 +251,7 @@ void Histogram::create_sketch() {
 			int pos2 = rand() % PREGEN; //For the other gamma
 
 			double y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
-			double a_i = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+			double a_i = this->gamma_param[pos2][i] / (y * this->power_r[pos1][i]);
 			unsigned long s_i = histoit->first;
 			for (histoit = this->histogram_map.begin(); histoit != this->histogram_map.end(); histoit++) {
 				label = histoit->first;
@@ -260,7 +261,7 @@ void Histogram::create_sketch() {
 				pos2 = rand() % PREGEN;
 
 				y = pow(M_E, log(histoit->second) - this->gamma_param[pos1][i] * this->uniform_param[pos1][i]);
-				double a = this->gamma_param[pos2][i] / (y * pow(M_E, this->gamma_param[pos1][i]));
+				double a = this->gamma_param[pos2][i] / (y * this->power_r[pos1][i]);
 				if (a < a_i) {
 					a_i = a;
 					s_i = histoit->first;
