@@ -346,6 +346,15 @@ run_wget_baseline_attack_subset:
 	mv ../../data/train_wget/sketch-wget-52.txt ../../data/test_wget_baseline
 	mv ../../data/train_wget/sketch-wget-72.txt ../../data/test_wget_baseline
 
+run_wget_baseline_attack_subset_CV:
+	cd ../../data && mkdir -p test_wget_baseline
+	number=0 ; while [ $$number -le 24 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt niters 10000 stream_file ../../data/attack_baseline/stream/stream-wget-attack-baseline-$$number.txt decay 450 lambda 0.02 window 2000 interval 3000 sketch_file ../../data/test_wget_baseline/sketch-wget-attack-baseline-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt.* ; \
+		rm -rf ../../data/attack_baseline/base/base-wget-attack-baseline-$$number.txt_* ; \
+		number=`expr $$number + 5` ; \
+	done
+
 number=0
 
 run_single_benign_wget:
