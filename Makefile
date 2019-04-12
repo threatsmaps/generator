@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DPREGEN=100000 -DMEMORY=1 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -406,3 +406,18 @@ run_cadets_attack:
 	mv ../../data/train_cadets/sketch-benign3-27.txt ../../data/test_cadets
 	mv ../../data/train_cadets/sketch-benign3-32.txt ../../data/test_cadets
 	mv ../../data/train_cadets/sketch-benign3-48.txt ../../data/test_cadets
+
+camflow_apt:
+	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 124 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window 3000 interval 6000 sketch_file ../../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 24 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt niters 100000 stream_file ../../data/camflow-apt/test/stream/stream-camflow-attack-$$number.txt decay 500 lambda 0.02 window 3000 interval 6000 sketch_file ../../data/camflow-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt.* ; \
+		rm -rf ../../data/camflow-apt/test/base/base-camflow-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
