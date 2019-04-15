@@ -475,3 +475,19 @@ camflow_shellshock_subset:
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt_* ; \
 		number=`expr $$number + 5` ; \
 done
+
+fivedirections_e3:
+	cd ../../data/fivedirections-e3 && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 112 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt niters 1000000 stream_file ../../data/fivedirections-e3/train/stream/stream-fivedirections-e3-benign-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/fivedirections-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt.* ; \
+		rm -rf ../../data/fivedirections-e3/train/base/base-fivedirections-e3-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 54 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt niters 1000000 stream_file ../../data/fivedirections-e3/test/stream/stream-fivedirections-e3-attack-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/fivedirections-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt.* ; \
+		rm -rf ../../data/fivedirections-e3/test/base/base-fivedirections-e3-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+
