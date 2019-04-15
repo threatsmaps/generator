@@ -75,7 +75,7 @@ namespace graphchi {
 		if (k == NULL)
 			logstream(LOG_FATAL) << "Time label does not exist." << std::endl;
 		assert (k != NULL);
-		x.tme[0] = std::stoi(k);
+		x.tme[0] = std::strtoul(k, NULL, 10);
 
 		k = strtok(NULL, delims);
 		if (k != NULL)

@@ -64,7 +64,7 @@ struct edge_label {
 	unsigned long src[K_HOPS+1];
 	unsigned long dst;
 	unsigned long edg;
-	int tme[K_HOPS+1];
+	unsigned long tme[K_HOPS+1];
 	int itr;
 	bool new_src;
 	bool new_dst;
@@ -77,7 +77,7 @@ typedef edge_label EdgeDataType;
  */
 struct node_label {
 	unsigned long lb[K_HOPS+1];
-	int tm[K_HOPS+1];
+	unsigned long tm[K_HOPS+1];
 	bool is_leaf;
 };
 

@@ -160,7 +160,7 @@ void * dynamic_graph_reader(void * info) {
 		if (k == NULL)
 			logstream(LOG_ERROR) << "Time label does not exist." << std::endl;
 		assert (k != NULL);
-		el.tme[0] = atoi(k);
+		el.tme[0] = strtoul(k, NULL, 10);
 
 #ifdef DEBUG
 		k = strtok(NULL, delims);
