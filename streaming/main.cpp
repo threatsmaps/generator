@@ -89,6 +89,7 @@ void * dynamic_graph_reader(void * info) {
 	EdgeDataType el;
 	char s[1024];
 	int cnt = 0;
+	bool passed_barrier = false;
 
 	while(fgets(s, 1024, f) != NULL) {
 		/*
@@ -96,10 +97,11 @@ void * dynamic_graph_reader(void * info) {
 		 * That is, we will wait until all previous added nodes and edges are done computing,
 		 * before we add new nodes and edges for computation.
 		 */
-		if (cnt == 0) {
+		if (cnt == 0 && !passed_barrier) {
 			// We wait until GraphChi finishes its computation, then we will start streaming in new edges.
 			pthread_barrier_wait(&std::stream_barrier);
 		}
+		passed_barrier = true;
 		FIXLINE(s);
 		/* Read next line. */
 		char delims[] = ":\t ";
@@ -190,6 +192,7 @@ void * dynamic_graph_reader(void * info) {
 		if (cnt == INTERVAL) {
 			/* We continue to add new edges until INTERVAL edges are added. Then we let GraphChi starts its computation. */
 			cnt = 0;
+			passed_barrier = false;
 			/* We first record the sketch from the updated graph. */
 			// logstream(LOG_INFO) << "Recording the base graph sketch... " << std::endl;
 			// hist->record_sketch(fp);
