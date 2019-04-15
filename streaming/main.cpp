@@ -12,6 +12,9 @@
  */
 
 #include <fstream>
+/* Runtime performance eval. */
+#include <ctime>
+#include <time.h>
 
 #include "include/def.hpp"
 #include "include/helper.hpp"
@@ -53,9 +56,19 @@ int CHUNK_SIZE;
  * @brief A separate thread execute this function to stream graph from a file.
  */
 void * dynamic_graph_reader(void * info) {
+	/* Start timestamp. */
+	std::time_t t0 = std::time(nullptr);
 	// logstream(LOG_DEBUG) << "Waiting to start streaming the graph..." << std::endl;
 	// usleep(100000); /* We do not need to sleep to wait. We have a while loop to do so. */
 	logstream(LOG_DEBUG) << "Streaming begins from file: " << stream_file << std::endl;
+
+	/* Open the stats.txt file to write our runtime statistics. */
+	FILE * fs = fopen("stats.txt", "a+");
+	if (fs == NULL) {
+		logstream(LOG_ERROR) << "Cannot open the stats file to write. " << "Error code: " << strerror(errno) << std::endl;
+		assert(false);
+		return NULL;
+	}
 
 	// /* Open the sketch file to write our sketches. */
 	// FILE * fp = fopen(sketch_file.c_str(), "a+");
@@ -90,6 +103,9 @@ void * dynamic_graph_reader(void * info) {
 	char s[1024];
 	int cnt = 0;
 	bool passed_barrier = false;
+	/* Runtime performance eval. */
+	double time_elapsed;
+	std::time_t tc;
 
 	while(fgets(s, 1024, f) != NULL) {
 		/*
@@ -100,6 +116,12 @@ void * dynamic_graph_reader(void * info) {
 		if (cnt == 0 && !passed_barrier) {
 			// We wait until GraphChi finishes its computation, then we will start streaming in new edges.
 			pthread_barrier_wait(&std::stream_barrier);
+			/* Record time for runtime performance eval. 
+			 * The first value is the time for a based graph to be finished computing.
+			 * The rest values are the time it takes to stream the edges and then do the computation.
+			 */
+			tc = std::time(nullptr);
+			fprintf(fs,"%f\n", (float)(tc-t0));
 		}
 		passed_barrier = true;
 		FIXLINE(s);
@@ -164,6 +186,13 @@ void * dynamic_graph_reader(void * info) {
 		assert (k != NULL);
 		el.tme[0] = strtoul(k, NULL, 10);
 
+		/* Time info for runtime rformance eval. */
+		k = strtok(NULL, delims);
+		if (k == NULL)
+			logstream(LOG_ERROR) << "Performance info does not exist." << std::endl;
+		assert (k != NULL);
+		time_elapsed = atof(k);
+
 #ifdef DEBUG
 		k = strtok(NULL, delims);
 		if (k != NULL)
@@ -177,6 +206,11 @@ void * dynamic_graph_reader(void * info) {
 		}
 		/* Add the new edge to the graph. */
 		bool success = false;
+		/* Allow to add only when time is larger than or equal to time_elapsed for runtime performance eval. */
+		tc = std::time(nullptr);
+		while ((double)(tc - t0) < time_elapsed) {
+			tc = std::time(nullptr);
+		}
 		while (!success) {
 			success = dyngraph_engine->add_edge(from, to, el);
 		}
@@ -203,9 +237,17 @@ void * dynamic_graph_reader(void * info) {
 	if (cnt != 0) {
 		/* Only need to wait if there is something there. */
 		pthread_barrier_wait(&std::graph_barrier);
+		/* Record time for last round of edges. */
+		tc = std::time(nullptr);
+		fprintf(fs,"%f\n", (float)(tc-t0));
 	}
 	if (ferror(f) != 0 || fclose(f) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the stream file: " << stream_file << ". Error code: " << strerror(errno) << std::endl;
+		return NULL;
+	}
+	/* Close the stats file for runtime performance eval. */
+	if (ferror(fs) != 0 || fclose(fs) != 0) {
+		logstream(LOG_ERROR) << "Unable to close the stats file. Error code: " << strerror(errno) << std::endl;
 		return NULL;
 	}
 	/* After the file is closed, the engine will stop 1000 iterations after the current iteration in which the addition is finished. */
