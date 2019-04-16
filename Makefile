@@ -449,7 +449,7 @@ camflow_apt_subset:
 eval_camflow_apt:
 	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 0 ] ; do \
-		bin/streaming/main filetype edgelist file ../../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ./../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ../../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
 		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
