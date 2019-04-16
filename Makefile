@@ -447,11 +447,14 @@ camflow_apt_subset:
 	done
 
 eval_camflow_apt:
-	cd ../../data/camflow-apt && mkdir -p sketch
-	bin/streaming/main filetype edgelist file ../../build/parsers/camflow/eval/base.txt niters 100000 stream_file ../../build/parsers/camflow/eval/stream.txt decay 500 lambda 0.02 window 3000 interval 6000 sketch_file ../../data/camflow-apt/sketch/sketch.txt chunkify 1 chunk_size 5
-	rm -rf ../../build/parsers/camflow/eval/base.txt.*
-	rm -rf ../../build/parsers/camflow/eval/base.txt_*
-	mv stats.txt ../../output/perf-wget-s-2000-h-3-w-3000-i-6000.txt
+	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 0 ] ; do \
+		bin/streaming/main filetype edgelist file ../../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ../../data/camflow-apt/sketch/sketch.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
+		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+		mv stats.txt ../../output/perf-wget-s-2000-h-3-w-$(WINDOW)-i-$(INTERVAL).txt ; \
+	done
 
 camflow_shellshock:
 	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
