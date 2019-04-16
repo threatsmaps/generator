@@ -479,13 +479,13 @@ done
 spade_apt_subset:
 	cd ../../data/spade-wget-apt && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 124 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/train/stream/stream-spade-benign-$$number.txt decay 500 lambda 0.02 window 2000 interval 4000 sketch_file ../../data/spade-wget-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/train/stream/stream-spade-benign-$$number.txt decay 500 lambda 0.02 window 2500 interval 5000 sketch_file ../../data/spade-wget-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt.* ; \
 		rm -rf ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt_* ; \
 		number=`expr $$number + 4` ; \
 	done
 	number=0 ; while [ $$number -le 24 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/test/stream/stream-spade-attack-$$number.txt decay 500 lambda 0.02 window 2000 interval 4000 sketch_file ../../data/spade-wget-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/test/stream/stream-spade-attack-$$number.txt decay 500 lambda 0.02 window 2500 interval 5000 sketch_file ../../data/spade-wget-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt.* ; \
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt_* ; \
 		number=`expr $$number + 5` ; \
