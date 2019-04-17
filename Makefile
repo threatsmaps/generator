@@ -469,6 +469,16 @@ eval_camflow_apt_cpu_mem:
 	done
 	killall `ps -aux | grep perf.sh | grep -v grep | awk '{ print $1 }'`
 
+eval_camflow_extended_cpu_mem:
+	cd ../../data/camflow-extended-dataset && mkdir -p train_sketch && mkdir -p test_sketch
+	sudo chmod 777 streaming/perf.sh
+	streaming/perf.sh > ../../output/perf-extended-cpumem-s-2000-h-3-w-$(WINDOW)-i-$(INTERVAL).txt &
+	bin/streaming/main filetype edgelist file ../../data/camflow-extended-dataset/train/base/base-audit.txt niters 100000 stream_file ../../data/camflow-extended-dataset/train/stream/stream-audit.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ../../data/camflow-extended-dataset/train_sketch/sketch-extended.txt chunkify 1 chunk_size 5
+	rm -rf ../../data/camflow-extended-dataset/train/base/base-audit.txt.*
+	rm -rf ../../data/camflow-extended-dataset/train/base/base-audit.txt_*
+	rm stats.txt
+	killall `ps -aux | grep perf.sh | grep -v grep | awk '{ print $1 }'`
+
 camflow_shellshock:
 	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 124 ] ; do \
