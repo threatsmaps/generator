@@ -458,13 +458,14 @@ eval_camflow_apt:
 
 eval_camflow_apt_cpu_mem:
 	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	sudo chmod 777 streaming/perf.sh
+	streaming/perf.sh > ../../output/perf-wget-cpumem-s-2000-h-3-w-$(WINDOW)-i-$(INTERVAL).txt &
 	number=0 ; while [ $$number -le 0 ] ; do \
-		streaming/perf.sh & ; \
 		bin/streaming/main filetype edgelist file ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ../../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
 		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
-		mv stats.txt ../../output/perf-wget-cpumem-s-2000-h-3-w-$(WINDOW)-i-$(INTERVAL).txt ; \
+		rm stats.txt ; \
 	done
 
 camflow_shellshock:
