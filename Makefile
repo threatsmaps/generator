@@ -467,6 +467,7 @@ eval_camflow_apt_cpu_mem:
 		number=`expr $$number + 1` ; \
 		rm stats.txt ; \
 	done
+	killall `ps -aux | grep perf.sh | grep -v grep | awk '{ print $1 }'`
 
 camflow_shellshock:
 	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
