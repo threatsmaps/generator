@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=500 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=1000 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -459,7 +459,7 @@ eval_camflow_apt:
 eval_camflow_apt_cpu_mem:
 	cd ../../data/camflow-apt && mkdir -p train_sketch && mkdir -p test_sketch
 	sudo chmod 777 streaming/perf.sh
-	streaming/perf.sh > ../../output/perf-wget-cpumem-s-500-h-3-w-$(WINDOW)-i-$(INTERVAL).txt &
+	streaming/perf.sh > ../../output/perf-wget-cpumem-s-1000-h-3-w-$(WINDOW)-i-$(INTERVAL).txt &
 	number=0 ; while [ $$number -le 0 ] ; do \
 		bin/streaming/main filetype edgelist file ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt niters 100000 stream_file ../../data/camflow-apt/train/stream/stream-camflow-benign-$$number.txt decay 500 lambda 0.02 window $(WINDOW) interval $(INTERVAL) sketch_file ../../data/camflow-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/camflow-apt/train/base/base-camflow-benign-$$number.txt.* ; \
