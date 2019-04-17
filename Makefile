@@ -459,7 +459,7 @@ camflow_shellshock:
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt.* ; \
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
-done
+	done
 
 camflow_shellshock_subset:
 	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
@@ -474,7 +474,22 @@ camflow_shellshock_subset:
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt.* ; \
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt_* ; \
 		number=`expr $$number + 5` ; \
-done
+	done
+
+spade_apt:
+	cd ../../data/spade-wget-apt && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 124 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/train/stream/stream-spade-benign-$$number.txt decay 500 lambda 0.02 window 3000 interval 6000 sketch_file ../../data/spade-wget-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt.* ; \
+		rm -rf ../../data/spade-wget-apt/train/base/base-spade-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 24 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt niters 100000 stream_file ../../data/spade-wget-apt/test/stream/stream-spade-attack-$$number.txt decay 500 lambda 0.02 window 3000 interval 6000 sketch_file ../../data/spade-wget-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt.* ; \
+		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
 
 spade_apt_subset:
 	cd ../../data/spade-wget-apt && mkdir -p train_sketch && mkdir -p test_sketch
@@ -489,7 +504,7 @@ spade_apt_subset:
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt.* ; \
 		rm -rf ../../data/spade-wget-apt/test/base/base-spade-attack-$$number.txt_* ; \
 		number=`expr $$number + 5` ; \
-done
+	done
 
 fivedirections_e3:
 	cd ../../data/fivedirections-e3 && mkdir -p train_sketch && mkdir -p test_sketch
