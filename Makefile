@@ -521,3 +521,17 @@ fivedirections_e3:
 		number=`expr $$number + 1` ; \
 	done
 
+clearscope_e3:
+	cd ../../data/clearscope-e3 && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 43 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/train/stream/stream-clearscope-e3-benign-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/clearscope-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt.* ; \
+		rm -rf ../../data/clearscope-e3/train/base/base-clearscope-e3-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 50 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt niters 100000 stream_file ../../data/clearscope-e3/test/stream/stream-clearscope-e3-attack-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/clearscope-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt.* ; \
+		rm -rf ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
