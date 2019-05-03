@@ -535,3 +535,18 @@ clearscope_e3:
 		rm -rf ../../data/clearscope-e3/test/base/base-clearscope-e3-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
+
+cadets_e3:
+	cd ../../data/cadets-e3 && mkdir -p train_sketch && mkdir -p test_sketch
+	number=0 ; while [ $$number -le 65 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/cadets-e3/train/base/base-cadets-e3-benign-$$number.txt niters 100000 stream_file ../../data/cadets-e3/train/stream/stream-cadets-e3-benign-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/cadets-e3/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/cadets-e3/train/base/base-cadets-e3-benign-$$number.txt.* ; \
+		rm -rf ../../data/cadets-e3/train/base/base-cadets-e3-benign-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
+	number=0 ; while [ $$number -le 7 ] ; do \
+		bin/streaming/main filetype edgelist file ../../data/cadets-e3/test/base/base-cadets-e3-attack-$$number.txt niters 100000 stream_file ../../data/cadets-e3/test/stream/stream-cadets-e3-attack-$$number.txt decay 5000 lambda 0.02 window 10000 interval 20000 sketch_file ../../data/cadets-e3/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		rm -rf ../../data/cadets-e3/test/base/base-cadets-e3-attack-$$number.txt.* ; \
+		rm -rf ../../data/cadets-e3/test/base/base-cadets-e3-attack-$$number.txt_* ; \
+		number=`expr $$number + 1` ; \
+	done
