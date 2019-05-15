@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=7000 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -449,13 +449,13 @@ camflow_apt_subset:
 camflow_shellshock:
 	cd ../../data/shellshock-apt && mkdir -p train_sketch && mkdir -p test_sketch
 	number=0 ; while [ $$number -le 124 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/train/stream/stream-shellshock-benign-$$number.txt decay 500 lambda 0.02 window 4000 interval 8000 sketch_file ../../data/shellshock-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/train/stream/stream-shellshock-benign-$$number.txt decay 500 lambda 0.02 window 7000 interval 14000 sketch_file ../../data/shellshock-apt/train_sketch/sketch-benign-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt.* ; \
 		rm -rf ../../data/shellshock-apt/train/base/base-shellshock-benign-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 	number=0 ; while [ $$number -le 24 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/test/stream/stream-shellshock-attack-$$number.txt decay 500 lambda 0.02 window 4000 interval 8000 sketch_file ../../data/shellshock-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
+		bin/streaming/main filetype edgelist file ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt niters 100000 stream_file ../../data/shellshock-apt/test/stream/stream-shellshock-attack-$$number.txt decay 500 lambda 0.02 window 7000 interval 14000 sketch_file ../../data/shellshock-apt/test_sketch/sketch-attack-$$number.txt chunkify 1 chunk_size 5 ; \
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt.* ; \
 		rm -rf ../../data/shellshock-apt/test/base/base-shellshock-attack-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
