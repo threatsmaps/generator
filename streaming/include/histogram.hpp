@@ -33,10 +33,10 @@ public:
 	static Histogram* get_instance();
 	~Histogram();
 	struct hist_elem construct_hist_elem(unsigned long label);
-	void decay(FILE* fp);
+	void decay(FILE* fp, FILE*fp2);
 	void update(unsigned long label, bool base);
 	void create_sketch();
-	void record_sketch(FILE* fp);
+	void record_sketch(FILE* fp, FILE*fp2);
 #ifdef DEBUG
 	void comp(unsigned long label, struct hist_elem a, struct hist_elem b);
 	void print_histogram();
@@ -48,6 +48,7 @@ private:
 	Histogram() {
 		this->t = 0;
 		this->w = 0;
+		this->c = 0;
 		this->powerful = pow(M_E, -LAMBDA);
 	}
 
@@ -62,6 +63,7 @@ private:
 
 	int t; /* If t reaches decay, we decay the cnt and hash value by e^(-lambda).*/
 	int w; /* If w reaches window, we record the sketch. */
+	int c; /* Count of histogram files */
 
 	/* The lock needed for updating histogram map. */
 	std::mutex histogram_map_lock;

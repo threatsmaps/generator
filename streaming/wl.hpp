@@ -286,7 +286,7 @@ namespace graphchi {
 						vertex.set_data(nl);
 						/* Populate histogram map of all its labels. */
 						for (int i = 0; i < K_HOPS + 1; i++) {
-							hist->decay(sfp);
+							hist->decay(sfp, sfp2);
 							hist->update(nl.lb[i], false);	
 						}
 
@@ -333,7 +333,7 @@ namespace graphchi {
 						}
 
 						/* Populate histogram map. */
-						hist->decay(sfp);
+						hist->decay(sfp, sfp2);
 						hist->update(nl.lb[0], false);
 					}
 				}
@@ -456,14 +456,14 @@ namespace graphchi {
 					unsigned long new_label = hash((unsigned char *)new_label_str.c_str());
 					/* Populate histogram map. */
 					if (!CHUNKIFY) {
-						hist->decay(sfp);
+						hist->decay(sfp, sfp2);
 						hist->update(new_label, false);
 					} else {
 						std::vector<unsigned long> to_insert = chunkify((unsigned char *)new_label_str.c_str(), CHUNK_SIZE);
 						bool first = true;
 						for (std::vector<unsigned long>::iterator ti = to_insert.begin(); ti != to_insert.end(); ++ti) {
 							if (first) {
-								hist->decay(sfp); /* Only increment decay value once. */
+								hist->decay(sfp, sfp2); /* Only increment decay value once. */
 							}
 							hist->update(*ti, false);
 							first = false;

@@ -39,6 +39,10 @@ extern bool CHUNKIFY;
 extern int CHUNK_SIZE;
 /* Sketch file to write the sketch. */
 extern FILE * sfp;
+/* Histogram file to write the histogram. */
+extern FILE * sfp2;
+/* If we want to write to one file for each histogram. */
+extern std::string hist_file;
 
 /* In a truly streaming setting, GraphChi does not allow dynamic vertex/edge type.
  * We therefore must fixed the neighborhood we are exploring.

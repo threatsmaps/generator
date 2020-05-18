@@ -16,7 +16,7 @@
 #include <math.h>
 #include <random>
 #include <cstdlib>
-
+#include <string>
 
 Histogram* Histogram::histogram;
 
@@ -81,7 +81,7 @@ void Histogram::comp(unsigned long label, struct hist_elem a, struct hist_elem b
 /*!
  * @brief For decaying values in histogram map. And record the sketch at the file @fp.
  */
-void Histogram::decay(FILE* fp) {
+void Histogram::decay(FILE* fp, FILE* fp2) {
 	this->histogram_map_lock.lock();
 	this->t++;
 	this->w++;
@@ -101,7 +101,36 @@ void Histogram::decay(FILE* fp) {
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			fprintf(fp,"%lu ", this->sketch[i]);
 		}
+		
 		fprintf(fp, "\n");
+
+		/* Write each histogram to the same file. */
+		// std::map<unsigned long, double>::iterator it;
+		// for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
+		//	fprintf(fp2,"%lf ", it->second);
+		// fprintf(fp2, "\n");
+
+		/* Write each histogram to a separate file. */
+		/* Decide file name. */
+		std::string hist_file_name (hist_file);
+		hist_file_name += ".";
+		hist_file_name += std::to_string(this->c);
+		/* Open the file. */
+		FILE *hfp = fopen(hist_file_name.c_str(), "a");
+		if (hfp == NULL) {
+			logstream(LOG_ERROR) << "Cannot open the histogram file to write: " << hist_file_name << ". Error code: " << strerror(errno) << std::endl;
+		}
+		assert(hfp != NULL);
+		/* Write to the file. */
+		std::map<unsigned long, double>::iterator it;
+		for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
+			fprintf(hfp,"%lu,%lf\n", it->first, it->second);
+		/* Close the file */
+		if (ferror(hfp) != 0 || fclose(hfp) != 0) {
+			logstream(LOG_ERROR) << "Unable to close the histogram file: " << hist_file_name <<  std::endl;
+                	return;
+		}
+		this->c++;
 		this->w = 0; /* Reset this timer. */
 	}
 	this->histogram_map_lock.unlock();
@@ -274,12 +303,41 @@ void Histogram::create_sketch() {
 	return;
 }
 
-void Histogram::record_sketch(FILE* fp) {
+void Histogram::record_sketch(FILE* fp, FILE* fp2) {
 	this->histogram_map_lock.lock();
+
 	for (int i = 0; i < SKETCH_SIZE; i++) {
 		fprintf(fp,"%lu ", this->sketch[i]);
 	}
 	fprintf(fp, "\n");
+
+	// std::map<unsigned long, double>::iterator it;
+	// for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
+	//	fprintf(fp2,"%lf ", it->second);
+	// fprintf(fp2, "\n");
+	//
+	/* Write each histogram to a separate file. */
+	/* Decide file name. */
+	std::string hist_file_name (hist_file);
+	hist_file_name += ".";
+	hist_file_name += std::to_string(this->c);
+	/* Open the file. */
+	FILE *hfp = fopen(hist_file_name.c_str(), "a");
+	if (hfp == NULL) {
+		logstream(LOG_ERROR) << "Cannot open the histogram file to write: " << hist_file_name << ". Error code: " << strerror(errno) << std::endl;
+	}
+	assert(hfp != NULL);
+	/* Write to the file. */
+	std::map<unsigned long, double>::iterator it;
+	for (it = this->histogram_map.begin(); it != this->histogram_map.end(); it++)
+		fprintf(hfp,"%lu,%lf\n", it->first, it->second);
+	/* Close the file */
+	if (ferror(hfp) != 0 || fclose(hfp) != 0) {
+		logstream(LOG_ERROR) << "Unable to close the histogram file: " << hist_file_name <<  std::endl;
+		return;
+	}
+	this->c++;
+
 	this->histogram_map_lock.unlock();
 	return;
 }

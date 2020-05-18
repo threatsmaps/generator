@@ -30,7 +30,9 @@ using namespace graphchi;
 graphchi_dynamicgraph_engine<VertexDataType, EdgeDataType> * dyngraph_engine;
 std::string stream_file;
 std::string sketch_file;
+std::string hist_file;
 FILE * sfp;
+FILE * sfp2; /* record raw histograms for evasion */
 
 pthread_barrier_t std::graph_barrier;
 pthread_barrier_t std::stream_barrier;
@@ -244,6 +246,7 @@ int main(int argc, const char ** argv) {
 	INTERVAL = get_option_int("interval", 1000);
 	WINDOW = get_option_int("window", 500);
 	sketch_file = get_option_string("sketch_file");
+	hist_file = get_option_string("histogram_file");
 	int to_chunk = get_option_int("chunkify", 1);
 	if (!to_chunk)
 		CHUNKIFY = false;
@@ -255,6 +258,13 @@ int main(int argc, const char ** argv) {
 		logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
 	}
 	assert(sfp != NULL);
+
+	/* Open the histogram file to write. */
+	sfp2 = fopen(hist_file.c_str(), "a");
+	if (sfp2 == NULL) {
+		logstream(LOG_ERROR) << "Cannot open the histogram file to write: " << hist_file << ". Error code: " << strerror(errno) << std::endl;
+	}
+	assert(sfp2 != NULL);
 	
 	/* Process input file - if not already preprocessed */
 	int nshards = convert_if_notexists<EdgeDataType>(filename, get_option_string("nshards", "auto"));
@@ -289,10 +299,17 @@ int main(int argc, const char ** argv) {
 	if (sfp == NULL) {
 		logstream(LOG_ERROR) << "Sketch file no longer exists... " << std::endl;
 	}
-	hist->record_sketch(sfp);
+	if (sfp2 == NULL) {
+		logstream(LOG_ERROR) << "Histogram file no longer exists... " << std::endl;
+	}
+	hist->record_sketch(sfp, sfp2);
 
 	if (ferror(sfp) != 0 || fclose(sfp) != 0) {
 		logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file <<  std::endl;
+		return -1;
+	}
+	if (ferror(sfp2) != 0 || fclose(sfp2) != 0) {
+		logstream(LOG_ERROR) << "Unable to close the histogram file: " << hist_file <<  std::endl;
 		return -1;
 	}
 
