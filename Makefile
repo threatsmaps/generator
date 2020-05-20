@@ -143,6 +143,12 @@ run_cnn:
 		number=`expr $$number + 1` ; \
 	done
 
+run_wget_toy:
+	cd ../../wget_test && mkdir -p sketch && mkdir -p histogram
+	bin/streaming/main filetype edgelist file ../../wget_test/wget_data/base/base-wget.txt niters 10000 stream_file ../../wget_test/wget_data/stream/stream-wget.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../wget_test/sketch/sketch.txt histogram_file ../../wget_test/histogram/histogram.txt chunkify 1 chunk_size 10
+	rm -rf ../../wget_test/wget_data/base/base-wget.txt.*
+	rm -rf ../../wget_test/wget_data/base/base-wget.txt_*
+
 run_attack_2:
 	cd ../../data && mkdir -p test_streamspot_attack && mkdir -p histogram
 	number=300 ; while [ $$number -le 399 ] ; do \
