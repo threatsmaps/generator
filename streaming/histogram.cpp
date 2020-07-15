@@ -166,7 +166,7 @@ void Histogram::update(unsigned long label, bool base) {
 		// it's a label (and therefore we want to export a graph for it)
 		if (std::db_handle != NULL) {
 			char *msgError;
-			std::string sql = "UPDATE hashmap SET level=2 WHERE hash = " +
+			std::string sql = "UPDATE hashmap SET level=3 WHERE hash = " +
 			    std::to_string(label) + ";";
 			if (sqlite3_exec(std::db_handle, sql.c_str(), NULL, 0, &msgError)
 			    != SQLITE_OK) {

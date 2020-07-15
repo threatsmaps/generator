@@ -23,6 +23,7 @@ namespace std {
     extern bool base_graph_constructed;
     extern bool no_new_tasks;
     extern sqlite3 *db_handle;
+    extern int db_iteration;	// This is a hack to get the iteration into the database
 }
 
 #endif

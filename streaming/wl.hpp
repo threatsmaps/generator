@@ -52,6 +52,7 @@ namespace graphchi {
 				return;
 			}
 #endif
+			std::db_iteration = gcontext.iteration;
 			if (gcontext.iteration == 0) {
 				/* On first iteration, initialize vertex label on the base graph (before new edges start streaming in). */
 				struct node_label nl;

@@ -37,6 +37,7 @@ FILE * sfp2; /* record raw histograms for evasion */
 pthread_barrier_t std::graph_barrier;
 pthread_barrier_t std::stream_barrier;
 int std::stop = 0;
+int std::db_iteration = 0;
 bool std::base_graph_constructed = false;
 bool std::no_new_tasks = false;
 sqlite3 *std::db_handle = NULL;

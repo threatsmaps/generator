@@ -33,16 +33,21 @@ namespace graphchi {
 	unsigned long hash(unsigned char *str) {
 		unsigned long hash = 5381;
 		unsigned char *orig = str;
+		const char *level;
 		int c;
 
+		if (std::db_iteration == 1) 
+			level = "', 1);";
+		else
+			level = "', 2);";
 		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 		if (std::db_handle != NULL) {
 			char *msgError;
 			std::string orig_str(reinterpret_cast<char*>(orig));
+			std::string level_str(reinterpret_cast<const char*>(level));
 			std::string sql = "INSERT OR IGNORE INTO hashmap (hash, val, level) VALUES ('" +
-			    std::to_string(hash) + "', '" + orig_str + "', 1)" +
-			    ";";
+			    std::to_string(hash) + "', '" + orig_str + level_str;
 			if (sqlite3_exec(std::db_handle, sql.c_str(), NULL, 0, &msgError)
 			    != SQLITE_OK) {
 				logstream(LOG_ERROR) << msgError << std::endl;
