@@ -2,6 +2,7 @@
 #define EXTERN_HPP
 
 #include <pthread.h>
+#include <sqlite3.h>
 
 /* *
  * @section DESCRIPTION
@@ -21,6 +22,7 @@ namespace std {
     extern int stop;
     extern bool base_graph_constructed;
     extern bool no_new_tasks;
+    extern sqlite3 *db_handle;
 }
 
 #endif

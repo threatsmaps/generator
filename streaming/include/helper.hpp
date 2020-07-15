@@ -23,6 +23,7 @@
 
 #include "logger/logger.hpp"
 #include "def.hpp"
+#include "../extern/extern.hpp"
 
 namespace graphchi {
 	/*!
@@ -31,10 +32,24 @@ namespace graphchi {
 	 */
 	unsigned long hash(unsigned char *str) {
 		unsigned long hash = 5381;
+		unsigned char *orig = str;
 		int c;
 
 		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+		if (std::db_handle != NULL) {
+			char *msgError;
+			std::string orig_str(reinterpret_cast<char*>(orig));
+			std::string sql = "INSERT OR IGNORE INTO hashmap (hash, val, level) VALUES ('" +
+			    std::to_string(hash) + "', '" + orig_str + "', 1)" +
+			    ";";
+			if (sqlite3_exec(std::db_handle, sql.c_str(), NULL, 0, &msgError)
+			    != SQLITE_OK) {
+				logstream(LOG_ERROR) << msgError << std::endl;
+				sqlite3_free(msgError);
+			}
+		}
+
 		return hash;
 	}
 

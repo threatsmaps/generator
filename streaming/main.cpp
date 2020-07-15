@@ -21,7 +21,6 @@
 #include "wl.hpp"
 #include "../extern/extern.hpp"
 
-
 #include <pthread.h> 
 #include <sys/types.h>
 
@@ -31,6 +30,7 @@ graphchi_dynamicgraph_engine<VertexDataType, EdgeDataType> * dyngraph_engine;
 std::string stream_file;
 std::string sketch_file;
 std::string hist_file;
+std::string dbdir;
 FILE * sfp;
 FILE * sfp2; /* record raw histograms for evasion */
 
@@ -39,6 +39,7 @@ pthread_barrier_t std::stream_barrier;
 int std::stop = 0;
 bool std::base_graph_constructed = false;
 bool std::no_new_tasks = false;
+sqlite3 *std::db_handle = NULL;
 /* The following variables are declared in def.hpp.
  * They are defined here and will be assigned values in main function. */
 int DECAY;
@@ -236,6 +237,7 @@ int main(int argc, const char ** argv) {
 	std::string filename = get_option_string("file");
 	int niters = get_option_int("niters", 1000000);
 	bool scheduler = true;
+	dbdir = get_option_string("db_dir", "");
 	stream_file = get_option_string("stream_file");
 
 	/* More parameters from command line to configure hyperparameters of feature vector generation. 
@@ -266,6 +268,17 @@ int main(int argc, const char ** argv) {
 	}
 	assert(sfp2 != NULL);
 	
+	/* Open the label database if specified. */
+	if (!(dbdir == "")) {
+		int ret;
+		if ((ret = sqlite3_open((dbdir + "/label.db").c_str(),
+		    &std::db_handle)) != SQLITE_OK) {
+			logstream(LOG_ERROR) << "Failed to open label directory: " << dbdir << ". Error code: " << sqlite3_errmsg(std::db_handle) << std::endl;
+			if (std::db_handle != NULL)
+				sqlite3_close(std::db_handle);
+		}
+	}
+
 	/* Process input file - if not already preprocessed */
 	int nshards = convert_if_notexists<EdgeDataType>(filename, get_option_string("nshards", "auto"));
 
@@ -324,5 +337,9 @@ int main(int argc, const char ** argv) {
 	}
 
 	// metrics_report(m);
+	// Close sqlite database
+	if (std::db_handle != NULL) {
+		sqlite3_close(std::db_handle);
+	}
 	return 0;
 }

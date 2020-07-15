@@ -11,6 +11,7 @@
  *
  */
 #include "include/histogram.hpp"
+#include "../extern/extern.hpp"
 
 #include <fstream>
 #include <math.h>
@@ -159,6 +160,20 @@ void Histogram::update(unsigned long label, bool base) {
 		logstream(LOG_DEBUG) << "The label " << label << " is already in the map. Updating the sketch and its hash." << std::endl;
 #endif
 		(rst.first)->second++;
+	} else {
+		// Label did not exist in the histogram, so this is first insert;
+		// We want to change the level in the database to be '2' to indicate that
+		// it's a label (and therefore we want to export a graph for it)
+		if (std::db_handle != NULL) {
+			char *msgError;
+			std::string sql = "UPDATE hashmap SET level=2 WHERE hash = " +
+			    std::to_string(label) + ";";
+			if (sqlite3_exec(std::db_handle, sql.c_str(), NULL, 0, &msgError)
+			    != SQLITE_OK) {
+				logstream(LOG_ERROR) << msgError << std::endl;
+				sqlite3_free(msgError);
+			}
+		}
 	}
 
 	/* Now we update the hash if needed.

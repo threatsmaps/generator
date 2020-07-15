@@ -1,8 +1,8 @@
 INCFLAGS = -I/usr/local/include/ -I./src/
 
 CPP = g++
-CPPFLAGS = -std=c++11 -g -O3 $(INCFLAGS)  -fopenmp -ffast-math -Wall -Wno-strict-aliasing -lpthread
-LINKERFLAGS = -lz
+CPPFLAGS = -std=c++11 -g -O3 $(INCFLAGS)  -fopenmp -ffast-math -Wall -Wno-strict-aliasing
+LINKERFLAGS = -lpthread -L /usr/lib/x86_64-linux-gnu -lsqlite3 -lz
 DEBUGFLAGS = -g -ggdb $(INCFLAGS)
 HEADERS=$(shell find . -name '*.hpp')
 
