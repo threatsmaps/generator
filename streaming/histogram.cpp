@@ -161,6 +161,7 @@ void Histogram::update(unsigned long label, bool base) {
 #endif
 		(rst.first)->second++;
 	} else {
+		/*
 		// Label did not exist in the histogram, so this is first insert;
 		// We want to change the level in the database to be '2' to indicate that
 		// it's a label (and therefore we want to export a graph for it)
@@ -174,6 +175,7 @@ void Histogram::update(unsigned long label, bool base) {
 				sqlite3_free(msgError);
 			}
 		}
+		*/
 	}
 
 	/* Now we update the hash if needed.
