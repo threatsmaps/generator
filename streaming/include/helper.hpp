@@ -97,10 +97,12 @@ namespace graphchi {
 		assert (k != NULL);
 		x.tme[0] = std::strtoul(k, NULL, 10);
 
+		/*
 		k = strtok(NULL, delims);
 		if (k != NULL)
 			logstream(LOG_FATAL) << "Extra info, if any, will be ignored." << std::endl;
 
+		*/
 		return;
 	}
 

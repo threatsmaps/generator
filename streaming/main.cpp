@@ -250,10 +250,11 @@ int main(int argc, const char ** argv) {
 	WINDOW = get_option_int("window", 500);
 	sketch_file = get_option_string("sketch_file");
 	hist_file = get_option_string("histogram_file");
-	int to_chunk = get_option_int("chunkify", 1);
+	//int to_chunk = get_option_int("chunkify", 1);
+	int to_chunk = 0;
 	if (!to_chunk)
 		CHUNKIFY = false;
-	CHUNK_SIZE = get_option_int("chunk_size", 5);
+	//CHUNK_SIZE = get_option_int("chunk_size", 5);
 
 	/* Open the sketch file to write. */
 	sfp = fopen(sketch_file.c_str(), "a");

@@ -1,7 +1,7 @@
 INCFLAGS = -I/usr/local/include/ -I./src/
 
 CPP = g++
-CPPFLAGS = -std=c++11 -g -O3 $(INCFLAGS)  -fopenmp -ffast-math -Wall -Wno-strict-aliasing
+CPPFLAGS = -std=c++11 -g $(INCFLAGS)  -fopenmp -ffast-math -Wall -Wno-strict-aliasing
 LINKERFLAGS = -lpthread -L /usr/lib/x86_64-linux-gnu -lsqlite3 -lz
 DEBUGFLAGS = -g -ggdb $(INCFLAGS)
 HEADERS=$(shell find . -name '*.hpp')
@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=2 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=2 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g -ggdb
 sdebug: streaming/main
 
 
