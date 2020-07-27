@@ -42,7 +42,7 @@ streaming/% : streaming/%.cpp $(HEADERS)
 	@mkdir -p bin/$(@D)
 	$(CPP) $(CPPFLAGS) -Istreaming/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 
-sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=2 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
+sdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DPREGEN=10000 -DMEMORY=1 -DDEBUG -g
 sdebug: streaming/main
 
 
@@ -134,25 +134,31 @@ run_download:
 	done
 
 run_cnn:
-	cd ../../data && mkdir -p test_streamspot_cnn && mkdir -p histogram
+	cd ../../data && mkdir -p train_cnn_new && mkdir -p histogram
 	number=500 ; while [ $$number -le 599 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/cnn_data/base_train/base-cnn-v2-$$number.txt niters 10000 stream_file ../../data/cnn_data/stream_train/stream-cnn-v2-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_streamspot_cnn/sketch-cnn-$$number.txt histogram_file ../../data/histogram/histogram-cnn-$$number.txt chunkify 1 chunk_size 10 ; \
+		bin/streaming/main filetype edgelist file ../../data/cnn_data/base_train/base-cnn-v2-$$number.txt niters 10000 stream_file ../../data/cnn_data/stream_train/stream-cnn-v2-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_cnn_new/sketch-cnn-$$number.txt histogram_file ../../data/histogram/histogram-cnn-$$number.txt chunkify 1 chunk_size 2000 ; \
 		rm -rf ../../data/cnn_data/base_train/base-cnn-v2-$$number.txt.* ; \
 		rm -rf ../../data/cnn_data/base_train/base-cnn-v2-$$number.txt_* ; \
-		rm -rf ../../data/histogram/histogram-cnn-$$number.txt ; \
 		number=`expr $$number + 1` ; \
 	done
 
 run_wget_toy:
-	cd ../../wget_test && mkdir -p sketch && mkdir -p histogram
-	bin/streaming/main filetype edgelist file ../../wget_test/wget_data/base/base-wget.txt niters 10000 stream_file ../../wget_test/wget_data/stream/stream-wget.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../wget_test/sketch/sketch.txt histogram_file ../../wget_test/histogram/histogram.txt chunkify 1 chunk_size 10
-	rm -rf ../../wget_test/wget_data/base/base-wget.txt.*
-	rm -rf ../../wget_test/wget_data/base/base-wget.txt_*
+	cd ../../data && mkdir -p camflow_train_sketch && mkdir -p histogram
+	bin/streaming/main filetype edgelist file ../../data/camflow_train/base/base-wget-0.txt niters 100000 stream_file ../../data/camflow_train/stream/stream-wget-0.txt decay 2000 lambda 0.02 window 500 interval 500 sketch_file ../../data/camflow_train_sketch/sketch-0.txt histogram_file ../../data/histogram/histogram-0.txt chunkify 1 chunk_size 10
+	rm -rf ../../data/camflow_train/base/base-wget-0.txt.*
+	rm -rf ../../data/camflow_train/base/base-wget-0.txt_*
+	bin/streaming/main filetype edgelist file ../../data/camflow_train/base/base-wget-1.txt niters 100000 stream_file ../../data/camflow_train/stream/stream-wget-1.txt decay 2000 lambda 0.02 window 500 interval 500 sketch_file ../../data/camflow_train_sketch/sketch-1.txt histogram_file ../../data/histogram/histogram-1.txt chunkify 1 chunk_size 10
+	rm -rf ../../data/camflow_train/base/base-wget-1.txt.*
+	rm -rf ../../data/camflow_train/base/base-wget-1.txt_*
+	cd ../../data && mkdir -p camflow_test_sketch && mkdir -p histogram
+	bin/streaming/main filetype edgelist file ../../data/camflow_test/base/base-wget.txt niters 100000 stream_file ../../data/camflow_test/stream/stream-wget.txt decay 2000 lambda 0.02 window 500 interval 500 sketch_file ../../data/camflow_test_sketch/sketch.txt histogram_file ../../data/histogram/histogram-2.txt chunkify 1 chunk_size 10
+	rm -rf ../../data/camflow_test/base/base-wget.txt.*
+	rm -rf ../../data/camflow_test/base/base-wget.txt_*
 
 run_attack_2:
-	cd ../../data && mkdir -p test_streamspot_attack && mkdir -p histogram
-	number=300 ; while [ $$number -le 399 ] ; do \
-	       bin/streaming/main filetype edgelist file ../../data/attack_data/base_train/base-attack-v2-$$number.txt niters 10000 stream_file ../../data/attack_data/stream_train/stream-attack-v2-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_streamspot_attack/sketch-attack-$$number.txt histogram_file ../../data/histogram/histogram-attack-$$number.txt chunkify 1 chunk_size 10 ; \
+	cd ../../data && mkdir -p test_attack_k_3 && mkdir -p histogram
+	number=300 ; while [ $$number -le 300 ] ; do \
+	       bin/streaming/main filetype edgelist file ../../data/attack_data/base_train/base-attack-v2-$$number.txt niters 10000 stream_file ../../data/attack_data/stream_train/stream-attack-v2-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_attack_k_3/sketch-attack-$$number.txt histogram_file ../../data/histogram/histogram-attack-$$number.txt chunkify 1 chunk_size 10 ; \
 	       rm -rf ../../data/attack_data/base_train/base-attack-v2-$$number.txt.* ; \
 	       rm -rf ../../data/attack_data/base_train/base-attack-v2-$$number.txt_* ; \
 	       rm -rf ../../data/histogram/histogram-attack-$$number.txt ; \
@@ -161,28 +167,33 @@ run_attack_2:
 
 run_evasion:
 	cd ../../data && mkdir -p test_streamspot
-	number=0 ; while [ $$number -le 99 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/evasion_data/base_train/base-evasion-$$number.txt niters 10000 stream_file ../../data/evasion_data/stream_train/stream-evasion-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_streamspot/sketch-evasion-$$number.txt chunkify 1 chunk_size 50 ; \
+	number=0 ; while [ $$number -le 0 ] ; do \
+	        rm -rf ../../data/test_streamspot/sketch-evasion-$$number.txt ; \
+		bin/streaming/main filetype edgelist file ../../data/evasion_data/base_train/base-evasion-$$number.txt niters 10000 stream_file ../../data/evasion_data/stream_train/stream-evasion-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_streamspot/sketch-evasion-$$number.txt chunkify 1 chunk_size 2000 ; \
 		rm -rf ../../data/evasion_data/base_train/base-evasion-$$number.txt.* ; \
 		rm -rf ../../data/evasion_data/base_train/base-evasion-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 
 run_toy_evasion:
-	cd ../../data && mkdir -p test_streamspot_toy && mkdir -p histogram
-	number=1 ; while [ $$number -le 1 ] ; do \
-		bin/streaming/main filetype edgelist file ../../data/evasion_toy_data/base_train/base-evasion-$$number.txt niters 10000 stream_file ../../data/evasion_toy_data/stream_train/stream-evasion-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_streamspot_toy/sketch-evasion-$$number.txt histogram_file ../../data/histogram/histogram-evasion-toy-$$number.txt chunkify 1 chunk_size 10 ; \
-		rm -rf ../../data/evasion_toy_data/base_train/base-evasion-$$number.txt.* ; \
-		rm -rf ../../data/evasion_toy_data/base_train/base-evasion-$$number.txt_* ; \
+	cd ../../data && mkdir -p test_cnn_toy && mkdir -p histogram
+	number=0 ; while [ $$number -le 0 ] ; do \
+		rm -rf ../../data/test_cnn_toy/sketch-evasion-$$number.txt ; \
+		bin/streaming/main filetype edgelist file ../../data/evasion_data/base_train/base-evasion-$$number.txt niters 10000 stream_file ../../data/evasion_data/stream_train/stream-evasion-$$number.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/test_cnn_toy/sketch-evasion-$$number.txt histogram_file ../../data/histogram/histogram-evasion-$$number.txt chunkify 1 chunk_size 2000 ; \
+		rm -rf ../../data/evasion_data/base_train/base-evasion-$$number.txt.* ; \
+		rm -rf ../../data/evasion_data/base_train/base-evasion-$$number.txt_* ; \
 		number=`expr $$number + 1` ; \
 	done
 
 run_toy_train:
-	cd ../../data && mkdir -p train_streamspot_toy && mkdir -p histogram
-	bin/streaming/main filetype edgelist file ../../data/cnn_data/base_train/base-cnn-v2-529.txt niters 10000 stream_file ../../data/cnn_data/stream_train/stream-cnn-v2-529.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_streamspot_toy/sketch-cnn-529.txt histogram_file ../../data/histogram/histogram-cnn-529.txt chunkify 1 chunk_size 10
-	rm -rf ../../data/cnn_data/base_train/base-cnn-v2-529.txt.*
-	rm -rf ../../data/cnn_data/base_train/base-cnn-v2-529.txt_*
+	cd ../../data && mkdir -p train_cnn_toy && mkdir -p histogram
+	bin/streaming/main filetype edgelist file ../../data/cnn_data/base_train/base-cnn-v2-574.txt niters 10000 stream_file ../../data/cnn_data/stream_train/stream-cnn-v2-574.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_cnn_toy/sketch-cnn-574.txt histogram_file ../../data/histogram/histogram-cnn-574.txt chunkify 1 chunk_size 2000
+	rm -rf ../../data/cnn_data/base_train/base-cnn-v2-574.txt.*
+	rm -rf ../../data/cnn_data/base_train/base-cnn-v2-574.txt_*
 
+run_tiny:
+	cd ../../data && mkdir -p train_tiny && mkdir -p histogram
+	bin/streaming/main filetype edgelist file ../../data/toy_data/base_train/base-toy.txt niters 10000 stream_file ../../data/toy_data/stream_train/stream-toy.txt decay 500 lambda 0.02 window 500 interval 3000 sketch_file ../../data/train_tiny/sketch.txt histogram_file ../../data/histogram/tiny.txt chunkify 1 chunk_size 10
 
 run_attack:
 	cd ../../data && mkdir -p test_streamspot
