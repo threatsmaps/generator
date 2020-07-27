@@ -98,10 +98,10 @@ void Histogram::decay(FILE* fp, FILE* fp2) {
 	}
 	/* Record sketch only when t == WINDOW. */
 	if (this->w >= WINDOW) {
+		//TODO: do nothing for now. We force sketch recording after every stream updates
 		for (int i = 0; i < SKETCH_SIZE; i++) {
 			fprintf(fp,"%lu ", this->sketch[i]);
 		}
-		
 		fprintf(fp, "\n");
 
 		/* Write each histogram to the same file. */
@@ -301,6 +301,10 @@ void Histogram::create_sketch() {
 	}
 	this->histogram_map_lock.unlock();
 	return;
+}
+
+unsigned long* Histogram::get_sketch() {
+	return this->sketch;
 }
 
 void Histogram::record_sketch(FILE* fp, FILE* fp2) {

@@ -102,6 +102,11 @@ void * dynamic_graph_reader(void * info) {
 		if (cnt == 0 && !passed_barrier) {
 			// We wait until GraphChi finishes its computation, then we will start streaming in new edges.
 			pthread_barrier_wait(&std::stream_barrier);
+			//TODO: we are forcing a sketch update
+			//for (int i = 0; i < SKETCH_SIZE; i++) {
+			//	fprintf(sfp,"%lu ", hist->get_sketch()[i]);
+			//}
+			//fprintf(sfp, "\n");
 		}
 		passed_barrier = true;
 		FIXLINE(s);

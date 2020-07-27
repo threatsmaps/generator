@@ -36,6 +36,7 @@ public:
 	void decay(FILE* fp, FILE*fp2);
 	void update(unsigned long label, bool base);
 	void create_sketch();
+	unsigned long* get_sketch();
 	void record_sketch(FILE* fp, FILE*fp2);
 #ifdef DEBUG
 	void comp(unsigned long label, struct hist_elem a, struct hist_elem b);
