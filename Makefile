@@ -72,12 +72,6 @@ unicorn/% : unicorn/%.cpp $(HEADERS)
 	$(CPP) $(CPPFLAGS) -Iunicorn/ $@.cpp -o bin/$@ $(LINKERFLAGS)
 #####################################################################
 ######################Unicorn Specific (Templates)################################################
-swdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DMEMORY -DPREGEN=10000 -DUSEWINDOW -DDEBUG -g
-swdebug: unicorn/main
-
-sbdebug: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DMEMORY -DPREGEN=10000 -DBASESKETCH -DDEBUG -g
-sbdebug: unicorn/main
-
-sv: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DMEMORY -DPREGEN=10000 -DUSEWINDOW -DVIZ -g
-sv: unicorn/main
+viz: CPPFLAGS += -DSKETCH_SIZE=2000 -DK_HOPS=3 -DMEMORY -DPREGEN=10000 -DVIZ -DDEBUG -g
+viz: unicorn/main
 
