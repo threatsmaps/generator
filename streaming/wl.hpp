@@ -52,10 +52,7 @@ namespace graphchi {
 				return;
 			}
 #endif
-			if (gcontext.iteration == 0)
-				std::db_iteration = K_HOPS + 1;
-			else
-				std::db_iteration = 1 + ((gcontext.iteration + 2) % K_HOPS);
+			std::db_iteration = std::max(gcontext.iteration, 1);
 
 			if (gcontext.iteration == 0) {
 				/* On first iteration, initialize vertex label on the base graph (before new edges start streaming in). */
@@ -528,6 +525,7 @@ namespace graphchi {
 		void before_iteration(int iteration, graphchi_context &gcontext) {
 			/* Always reset @next_itr to false before an iteration. */
 			// next_itr = false;
+			std::db_iteration = std::max(gcontext.iteration, 1);
 		}
 	    
 		/**

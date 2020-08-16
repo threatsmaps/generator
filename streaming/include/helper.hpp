@@ -38,6 +38,7 @@ namespace graphchi {
 		while (c = *str++)
 			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 		if (std::db_handle != NULL) {
+			std::db_iteration = std::max(1, std::db_iteration);
 			char *msgError;
 			std::string orig_str(reinterpret_cast<char*>(orig));
 			std::string sql = "INSERT OR IGNORE INTO hashmap (hash, val, level) VALUES ('" +
