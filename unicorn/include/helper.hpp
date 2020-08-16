@@ -23,6 +23,8 @@
 #include "logger/logger.hpp"
 /* Header file from Unicorn. */
 #include "def.hpp"
+/* Header file from Visicorn. */
+#include "../extern/extern.hpp"
 
 namespace graphchi {
     /* Deterministically hash character strings to
@@ -30,9 +32,26 @@ namespace graphchi {
     unsigned long hash(unsigned char *str) {
         unsigned long hash = 5381;
         int c;
+	/* For Visicorn. */
+	unsigned char *orig = str;
 
         while (c = *str++)
             hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	/* Insert hash and its original value to Visicorn
+	 * database for visualization purposes. */
+	if (std::db != NULL) {
+            std::db_iteration = std::max(1, std::db_iteration);
+            char *error_msg;
+	    std::string orig_str(reinterpret_cast<char*>(orig));
+	    std::string sql = "INSERT OR IGNORE INTO hashmap (hash, val, level) VALUES ('" +
+                              std::to_string(hash) + "', '" + orig_str + "', " +
+			      std::to_string(std::db_iteration) + ");";
+	    if (sqlite3_exec(std::db, sql.c_str(), NULL, 0, &error_msg) != SQLITE_OK) {
+                logstream(LOG_ERROR) << error_msg << std::endl;
+		sqlite3_free(error_msg);
+            }
+        }
+
         return hash;
     }
 

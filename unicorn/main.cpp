@@ -32,6 +32,8 @@ using namespace graphchi;
 graphchi_dynamicgraph_engine<VertexDataType, EdgeDataType> * dyngraph_engine;
 std::string stream_file;
 std::string sketch_file;
+/* For Visicorn. */
+std::string db_dir;
 /* The following variables are declared
  * in extern.hpp. They are defined here
  * and will be used in various place in
@@ -41,6 +43,8 @@ pthread_barrier_t std::stream_barrier;
 int std::stop = 0;
 bool std::base_graph_constructed = false;
 bool std::no_new_tasks = false;
+sqlite3 *std::db = NULL;
+int std::db_iteration = 0;
 /* The following variables are declared in def.hpp.
  * They are defined here and will be assigned values
  * in the main function. */
@@ -296,9 +300,12 @@ int main(int argc, const char ** argv) {
 #ifdef VIZ
     HIST_FILE = get_option_string("histogram");
 #endif
-    int to_chunk = get_option_int("chunkify", 1);
+    /* Visicorn: default is not to chunk. */
+    int to_chunk = get_option_int("chunkify", 0);
     if (!to_chunk) CHUNKIFY = false;
     CHUNK_SIZE = get_option_int("chunk_size", 5);
+    /* For Visicorn. */
+    db_dir = get_option_string("db_dir", "");
 
     /* Open the sketch file to write. */
     SFP = fopen(sketch_file.c_str(), "a");
@@ -306,6 +313,14 @@ int main(int argc, const char ** argv) {
         logstream(LOG_ERROR) << "Cannot open the sketch file to write: " << sketch_file << ". Error code: " << strerror(errno) << std::endl;
     }
     assert(SFP != NULL);
+    /* Open the Visicorn visualization database if specified. */
+    if (db_dir != "") {
+        if (sqlite3_open((db_dir + "/label.db").c_str(), &std::db) != SQLITE_OK) {
+            logstream(LOG_ERROR) << "Cannot open the label directory: " << db_dir << ". Error code: " << sqlite3_errmsg(std::db) << std::endl;
+	    if (std::db != NULL)
+                sqlite3_close(std::db);
+        }
+    }
 
     /* Process input file - if not already preprocessed */
     int nshards = convert_if_notexists<EdgeDataType>(base_file, get_option_string("nshards", "auto"));
@@ -342,6 +357,10 @@ int main(int argc, const char ** argv) {
         logstream(LOG_ERROR) << "Unable to close the sketch file: " << sketch_file <<  std::endl;
         return -1;
     }
+
+    /* Close Visicorn visualization database. */
+    if (std::db != NULL)
+        sqlite3_close(std::db);
 
     /* Release the barrier resources. */
     int ret_stream = pthread_barrier_destroy(&std::stream_barrier);

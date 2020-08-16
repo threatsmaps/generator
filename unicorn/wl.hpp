@@ -470,6 +470,8 @@ namespace graphchi {
 	
 	/* Called before an iteration starts. */
 	void before_iteration(int iteration, graphchi_context &gcontext) {
+            /* db_iteration is set and used for Visicorn. */
+            std::db_iteration = std::max(iteration, 1);
 	}
 
 	/* Called after an iteration has finished. */
