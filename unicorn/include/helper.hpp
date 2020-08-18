@@ -43,7 +43,7 @@ namespace graphchi {
             std::db_iteration = std::max(1, std::db_iteration);
             char *error_msg;
 	    std::string orig_str(reinterpret_cast<char*>(orig));
-	    std::string sql = "INSERT OR IGNORE INTO hashmap (hash, val, level) VALUES ('" +
+	    std::string sql = "INSERT OR IGNORE INTO " + DB_TABLE + " (hash, val, level) VALUES ('" +
                               std::to_string(hash) + "', '" + orig_str + "', " +
 			      std::to_string(std::db_iteration) + ");";
 	    if (sqlite3_exec(std::db, sql.c_str(), NULL, 0, &error_msg) != SQLITE_OK) {

@@ -51,6 +51,8 @@ extern FILE * SFP;
  * visualization only since file I/O is costly. */
 extern std::string HIST_FILE;
 #endif
+/* For Visicorn. The name of the database table. */
+extern std::string DB_TABLE;
 
 /* In a streaming setting, GraphChi does not allow dynamic vertex/edge type.
  * We therefore must fixed the neighborhood we are exploring.

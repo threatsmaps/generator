@@ -29,7 +29,7 @@ make viz
 ## Run
 Once you have compiled the code, you can use the following command template and run the code (from the `graphchi-cpp/` directory):
 ```
-bin/unicorn/main filetype edgelist [niters <MAX_NUMBER_OF_ITERATIONS>] base <BASE_GRAPH_FILE_PATH> stream <STREAM_GRAPH_FILE_PATH> [decay <DECAY_FREQUENCY>] [lambda <DECAY_RATE]> [window <WINDOW_SIZE>] [batch <BATCH_SIZE>] [chunkify <1_OR_0>] [chunk_size <SIZE>] sketch <GRAPH_SKETCH_FILE_PATH> [histogram <HISTOGRAM_FILE_PREFIX_NAME>] [db_dir <VISICORN_DB_DIRECTORY>]
+bin/unicorn/main filetype edgelist [niters <MAX_NUMBER_OF_ITERATIONS>] base <BASE_GRAPH_FILE_PATH> stream <STREAM_GRAPH_FILE_PATH> [decay <DECAY_FREQUENCY>] [lambda <DECAY_RATE]> [window <WINDOW_SIZE>] [batch <BATCH_SIZE>] [chunkify <1_OR_0>] [chunk_size <SIZE>] sketch <GRAPH_SKETCH_FILE_PATH> [histogram <HISTOGRAM_FILE_PREFIX_NAME>] [db_dir <VISICORN_DB_DIRECTORY>] [db_name <VISICORN_DB_NAME>]
 ```
 * `filetype`: must be `edgelist`. *Do not change this argument value*
 * `niters`: (optional) the maximum number of iterations to analyze the streaming graph. You can set this value as big as possible, but Unicorn will stop once the entire graph has been processed. The default value (which is set to be 1,000,000) is big enough, so in most cases, you do *not* need to set this value
@@ -44,3 +44,4 @@ bin/unicorn/main filetype edgelist [niters <MAX_NUMBER_OF_ITERATIONS>] base <BAS
 * `sketch`: (required) the file path to graph sketches
 * `histogram`: (optional) you must provide the prefix name for file paths to all histogram files *if and only if* the `VIZ` macro is set. Unicorn wil generate one histogram file per sketch generation; that is, the number of sketches in the sketch file is the same as the number of histogram files. *Do not provide this argument if the macro is not set, but always set this argument for Visicorn*
 * `db_dir`: (optional) you should provide the directory path for the database used in Visicorn. *Always set this argument for Visicorn*
+* `db_name`: (optional) if you use `db_dir`, you must provide a `db_name` to access the database table corresponding to the dataset in the database. *Always set this argument for Visicorn*

@@ -55,6 +55,8 @@ int BATCH;
 bool CHUNKIFY = true;
 int CHUNK_SIZE;
 FILE * SFP;
+/* For Visicorn. */
+std::string DB_TABLE;
 #ifdef VIZ
 std::string HIST_FILE;
 #endif
@@ -300,6 +302,12 @@ int main(int argc, const char ** argv) {
 #ifdef VIZ
     HIST_FILE = get_option_string("histogram");
 #endif
+    /* Visicorn: database table name. */
+    DB_TABLE = get_option_string("db_name", "");
+    if (DB_TABLE == "") {
+        logstream(LOG_ERROR) << "If you are using Visicorn database, you forgot to provide the name of the table!" << std::endl;
+        assert(DB_TABLE != "");
+    }
     /* Visicorn: default is not to chunk. */
     int to_chunk = get_option_int("chunkify", 0);
     if (!to_chunk) CHUNKIFY = false;
