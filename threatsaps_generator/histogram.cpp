@@ -96,56 +96,71 @@ void Histogram::update(unsigned long label, bool base) {
      * histogram. This is done both in base and stream graph. */
     std::pair<std::map<unsigned long, double>::iterator, bool> rst;
     double counter = 1;
-    rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
-    if (rst.second == false) {
-#ifdef DEBUG
-        logstream(LOG_DEBUG) << "The label " << label << " is already in the map. Updating the sketch and its hash..." << std::endl;
-#endif
-        (rst.first)->second++;
+
+    // If label is the asterisk "*", this label is unique. 
+    // It's genric, it represent any label.
+    if(label == 1111111111111111111){ 
+        //this->histogram_map.end() or this->histogram_map.size()
+        for(int i=0; i< this->histogram_map.end(); i++){
+            std::map<unsigned long, double>::iterator stick = this->histogram_map.begin() + i;
+            stick->second++; 
+        }
     }
+    // label is not the asterisk
+    else{ 
+        rst = this->histogram_map.insert(std::pair<unsigned long, double>(label, counter));
+        if (rst.second == false) {
+            #ifdef DEBUG
+                logstream(LOG_DEBUG) << "The label " << label << " is already in the map. Updating the sketch and its hash..." << std::endl;
+            #endif
+            (rst.first)->second++;
+        }
+    }
+
     /* Now we update the hash if needed.
      * Update hash only in stream graph. */
     if (!base) {
         /* MEMORY is a compilation constant defined using -D flag.
-	 * If MEMORY is set, we use pre-sampled random variable.
-	 * This is an optimization as sampling can be slow on-the-fly. */
-#ifdef MEMORY
-	/* We use @label to decide which pre-sampled values to use
-	 * so we will always use the same values for the same label. */
-	srand(label);
-	int pos1 = rand() % PREGEN;
-	int pos2 = rand() % PREGEN;
-	for (int i = 0; i < SKETCH_SIZE; i++) {
-            /* Compute the new hash value using picked random variables. */
-            double c = this->gamma_param[pos2][i];
-	    double y = (rst.first)->second / this->r_beta_param[pos1][i];
-	    double a = c / (y * this->power_r[pos1][i]);
-            /* If the hash value is smaller than the existing value,
-	     * we replace the hash value and change the sketch value. */
-	    if (a < this->hash[i]) {
-                this->hash[i] = a;
-		this->sketch[i] = (rst.first)->first;
-	    }
-	}
-#else
-        /* If we do not use pre-sampled random values, we sample first
-	 * using the label and then update the hash values and sketches. */
-        struct hist_elem generated_param = this->construct_hist_elem(label);
-	for (int i = 0; i < SKETCH_SIZE; i++) {
-            /* Compute the new hash value a. */
-            double r = generated_param.r[i];
-	    double beta = generated_param.beta[i];
-	    double c = generated_param.c[i];
-	    double y = pow(M_E, log((rst.first)->second) - r * beta);
-	    double a = c / (y * pow(M_E, r));
-
-	    if (a < this->hash[i]) {
-                this->hash[i] = a;
-		this->sketch[i] = (rst.first)->first;
+        * If MEMORY is set, we use pre-sampled random variable.
+        * This is an optimization as sampling can be slow on-the-fly. */
+        #ifdef MEMORY
+            /* We use @label to decide which pre-sampled values to use
+            * so we will always use the same values for the same label. */
+            srand(label);
+            int pos1 = rand() % PREGEN;
+            int pos2 = rand() % PREGEN;
+            for (int i = 0; i < SKETCH_SIZE; i++) {
+                /* Compute the new hash value using picked random variables. */
+                double c = this->gamma_param[pos2][i];
+                double y = (rst.first)->second / this->r_beta_param[pos1][i];
+                double a = c / (y * this->power_r[pos1][i]);
+                /* If the hash value is smaller than the existing value,
+                * we replace the hash value and change the sketch value. */
+                if (a < this->hash[i]) {
+                    this->hash[i] = a;
+                    this->sketch[i] = (rst.first)->first;
+                }
             }
-	}
-#endif
+        #else
+            /* If we do not use pre-sampled random values, we sample first
+            * using the label and then update the hash values and sketches. */
+            struct hist_elem generated_param = this->construct_hist_elem(label);
+            for (int i = 0; i < SKETCH_SIZE; i++) {
+                /* Compute the new hash value a. */
+                double r = generated_param.r[i];
+                double beta = generated_param.beta[i];
+                double c = generated_param.c[i];
+                double y = pow(M_E, log((rst.first)->second) - r * beta);
+                double a = c / (y * pow(M_E, r));
+
+                if (a < this->hash[i]) {
+                    this->hash[i] = a;
+                    this->sketch[i] = (rst.first)->first;
+                }
+            }
+        #endif
     }
+
     this->histogram_map_lock.unlock();
     return;
 }
